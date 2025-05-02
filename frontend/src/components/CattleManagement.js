@@ -1,0 +1,45 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormHelperText,
+  Grid,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  Snackbar,
+  Alert,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Typography,
+  Chip,
+  Divider,
+  LinearProgress,
+  Tooltip,
+  TablePagination,
+  tableCellClasses,
+  styled,
+  useTheme
+} from '@mui/material';
+import { 
+  Add as AddIcon,
+  Edit as EditIcon, 
+  Delete as DeleteIcon,
+  Search as SearchIcon,
+  Refresh as RefreshIcon,
+  Pets as PetsIcon,
+  Scale as ScaleIcon
+} from '@mui/icons-material';
