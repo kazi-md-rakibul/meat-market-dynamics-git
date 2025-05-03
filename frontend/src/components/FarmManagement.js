@@ -42,3 +42,18 @@ import {
   CheckCircle as CheckCircleIcon,
   Info as InfoIcon
 } from '@mui/icons-material';
+
+// Styled components for enhanced table
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.common.white,
+      fontWeight: 600,
+      padding: '16px',
+      whiteSpace: 'nowrap'
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+      padding: '12px 16px',
+    },
+  }));
