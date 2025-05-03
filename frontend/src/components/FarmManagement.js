@@ -58,7 +58,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
   }));
 
-  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
       backgroundColor: theme.palette.mode === 'dark' 
         ? theme.palette.action.hover 
@@ -75,3 +75,46 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
       cursor: 'pointer',
     },
   }));
+ const FarmManagement = () => {
+    const theme = useTheme();
+    const [farms, setFarms] = useState([]);
+    const [open, setOpen] = useState(false);
+    const [selectedFarm, setSelectedFarm] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [formData, setFormData] = useState({
+      farm_Name: '',
+      livestock_Type: '',
+      available_Stock: 0,
+      address: '',
+      number_of_Livestock: 0,
+      contact_info: '',
+    });
+  
+    useEffect(() => {
+      fetchFarms();
+    }, []);
+  
+    const fetchFarms = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get('http://localhost:5000/api/farms');
+        setFarms(Array.isArray(response.data) ? response.data : []);
+        setPage(0); // Reset to first page
+      } catch (error) {
+        console.error('Error fetching farms:', error);
+        setSnackbar({
+          open: true,
+          message: 'Failed to load farms. Please try again.',
+          severity: 'error'
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+
+ 
