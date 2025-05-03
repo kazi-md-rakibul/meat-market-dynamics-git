@@ -321,14 +321,256 @@ const SupplyDashboard = () => {
     },
   ];
 
+  return (
+    <Layout>
+      <div style={{ padding: '24px' }}>
+        <h1>Supply Chain Management & Warehouse</h1>
+        
+        {/* Supply Overview Section with Graphs and Warehouse Management */}
+        <Card title="Supply Chain Overview">
+          <Row gutter={[16, 16]}>
+            {/* Warehouse Utilization Chart */}
+            <Col xs={24} lg={12}>
+              <Card title="Warehouse Utilization (%)">
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart
+                    data={utilizationData}
+                    margin={{ top: 5, right: 30, left: 20, bottom: 70 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="name" 
+                      angle={-45} 
+                      textAnchor="end" 
+                      height={70}
+                    />
+                    <YAxis domain={[0, 100]} />
+                    <Tooltip formatter={(value) => [`${value}%`, 'Utilization']} />
+                    <Legend />
+                    <Bar 
+                      dataKey="utilization" 
+                      name="Utilization %" 
+                      fill="#8884d8"
+                      barSize={40}
+                    >
+                      {utilizationData.map((entry, index) => (
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={entry.utilization > 90 ? '#ff4d4f' : 
+                                entry.utilization > 70 ? '#faad14' : '#52c41a'} 
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+            </Col>
+            
+            {/* Storage Condition Distribution Chart */}
+            <Col xs={24} lg={12}>
+              <Card title="Storage Condition Distribution">
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={storageConditionData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={true}
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {storageConditionData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => [`${value} warehouses`, 'Count']} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+        
+        <Divider />
+        
+        {/* Warehouse Management Section */}
+        <Card 
+          title="Warehouse Management" 
+          extra={
+            <Button type="primary" onClick={() => setIsModalVisible(true)}>
+              Add New Warehouse
+            </Button>
+          }
+          style={{ marginTop: '16px' }}
+        >
+          <Table 
+            columns={warehouseColumns} 
+            dataSource={warehouses} 
+            loading={loading.warehouses}
+            rowKey="warehouse_ID"
+          />
+        </Card>
+
+        {/* Add Warehouse Modal */}
+        <Modal
+          title="Add New Warehouse"
+          open={isModalVisible}
+          onCancel={() => {
+            setIsModalVisible(false);
+            form.resetFields();
+          }}
+          footer={null}
+        >
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleSubmitWarehouse}
+          >
+            <Form.Item
+              name="address"
+              label="Address"
+              rules={[{ required: true, message: 'Please input warehouse address' }]}
+            >
+              <Input placeholder="Enter full address" />
+            </Form.Item>
+            
+            <Form.Item
+              name="current_stock"
+              label="Initial Stock"
+              rules={[{ required: true, message: 'Please input initial stock' }]}
+            >
+              <InputNumber min={0} style={{ width: '100%' }} />
+            </Form.Item>
+            
+            <Form.Item
+              name="capacity"
+              label="Total Capacity"
+              rules={[{ required: true, message: 'Please input warehouse capacity' }]}
+            >
+              <InputNumber min={1} style={{ width: '100%' }} />
+            </Form.Item>
+            
+            <Form.Item
+              name="storage_condition"
+              label="Storage Condition"
+              rules={[{ required: true, message: 'Please select storage condition' }]}
+            >
+              <Select placeholder="Select storage condition">
+                <Option value="Refrigerated">Refrigerated</Option>
+                <Option value="Frozen">Frozen</Option>
+                <Option value="Dry Storage">Dry Storage</Option>
+                <Option value="Controlled Atmosphere">Controlled Atmosphere</Option>
+              </Select>
+            </Form.Item>
+            
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Button 
+                onClick={() => {
+                  console.log('Cancel button clicked');
+                  setIsModalVisible(false);
+                  form.resetFields();
+                }}
+                style={{ marginRight: 8 }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="primary"
+                onClick={() => {
+                  console.log('Manual form submission');
+                  form.submit(); // This explicitly submits the form
+                }}
+              >
+                Submit
+              </Button>
+            </div>
+          </Form>
+        </Modal>
+        
+        {/* Edit Warehouse Modal */}
+        <Modal
+          title="Edit Warehouse"
+          open={isEditModalVisible}
+          onCancel={() => {
+            setIsEditModalVisible(false);
+            form.resetFields();
+            setEditingWarehouse(null);
+          }}
+          footer={null}
+        >
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleUpdateWarehouse}
+          >
+            <Form.Item
+              name="address"
+              label="Address"
+              rules={[{ required: true, message: 'Please input warehouse address' }]}
+            >
+              <Input placeholder="Enter full address" />
+            </Form.Item>
+            
+            <Form.Item
+              name="current_stock"
+              label="Current Stock"
+              rules={[{ required: true, message: 'Please input current stock' }]}
+            >
+              <InputNumber min={0} style={{ width: '100%' }} />
+            </Form.Item>
+            
+            <Form.Item
+              name="capacity"
+              label="Total Capacity"
+              rules={[{ required: true, message: 'Please input warehouse capacity' }]}
+            >
+              <InputNumber min={1} style={{ width: '100%' }} />
+            </Form.Item>
+            
+            <Form.Item
+              name="storage_condition"
+              label="Storage Condition"
+              rules={[{ required: true, message: 'Please select storage condition' }]}
+            >
+              <Select placeholder="Select storage condition">
+                <Option value="Refrigerated">Refrigerated</Option>
+                <Option value="Frozen">Frozen</Option>
+                <Option value="Dry Storage">Dry Storage</Option>
+                <Option value="Controlled Atmosphere">Controlled Atmosphere</Option>
+              </Select>
+            </Form.Item>
+            
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Button 
+                onClick={() => {
+                  setIsEditModalVisible(false);
+                  form.resetFields();
+                  setEditingWarehouse(null);
+                }}
+                style={{ marginRight: 8 }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="primary"
+                onClick={() => {
+                  console.log('Manual form update submission');
+                  form.submit(); // This explicitly submits the form
+                }}
+              >
+                Update
+              </Button>
+            </div>
+          </Form>
+        </Modal>
+      </div>
+    </Layout>
+  );
 
 
+};
 
-
-
-
-
-
-
-}
-
+export default SupplyDashboard;
