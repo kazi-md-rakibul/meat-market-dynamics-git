@@ -450,5 +450,138 @@ const showModal = () => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    fetchProducts();
+    fetchBatches();
+  }, []);
 
+  // Helper function to get color based on meat type
+  const getMeatTypeColor = (meatType) => {
+    switch(meatType?.toLowerCase()) {
+      case 'beef': return '#dc2626'; // red-600
+      case 'pork': return '#ea580c'; // orange-600
+      case 'chicken': return '#ca8a04'; // yellow-600
+      case 'lamb': return '#65a30d'; // lime-600
+      case 'turkey': return '#0891b2'; // cyan-600
+      default: return '#6366f1'; // indigo-500
+    }
+  };
+  
+  // Filter products based on search
+  const filteredProducts = products.filter(product => {
+    if (!searchText) return true;
+    
+    const searchValue = product[searchCategory];
+    if (searchValue === undefined || searchValue === null) return false;
+    
+    return String(searchValue).toLowerCase().includes(searchText.toLowerCase());
+  });
+
+  
+  return (
+    <Layout>
+      <style>{tableCSS}</style>
+      <div style={{
+        padding: screens.xs ? '16px' : '24px',
+        maxWidth: '100%',
+        overflowX: 'auto',
+        backgroundColor: '#f8fafc'
+      }}>
+        <Card 
+          style={{ 
+            borderRadius: '8px', 
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            marginBottom: '24px'
+          }}
+        >
+          <div style={{
+            marginBottom: '20px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            flexDirection: screens.xs ? 'column' : 'row',
+            gap: screens.xs ? '16px' : 0,
+            alignItems: screens.xs ? 'flex-start' : 'center',
+            borderBottom: '1px solid #f0f0f0',
+            paddingBottom: '16px'
+          }}>
+            <Title level={4} style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span role="img" aria-label="catalog">📋</span> Product Catalog
+            </Title>
+            <Button 
+              type="primary" 
+              onClick={showModal} 
+              style={{ 
+                width: screens.xs ? '100%' : 'auto',
+                height: '38px',
+                borderRadius: '6px',
+                fontWeight: 500,
+                boxShadow: '0 2px 0 rgba(0,0,0,0.02)',
+                backgroundColor: '#4f46e5',
+                borderColor: '#4f46e5'
+              }}
+              icon={<span role="img" aria-label="add">➕</span>}
+            >
+              Add Product
+            </Button>
+          </div>
+          
+          <div style={{
+            marginBottom: '16px',
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '12px',
+            alignItems: 'center'
+          }}>
+            <Input.Group compact style={{ display: 'flex', width: screens.xs ? '100%' : '400px' }}>
+              <Select 
+                defaultValue="product_name" 
+                style={{ width: '40%' }}
+                onChange={value => setSearchCategory(value)}
+                value={searchCategory}
+              >
+                <Option value="product_name">Product Name</Option>
+                <Option value="meat_Type">Meat Type</Option>
+                <Option value="origin">Origin</Option>
+                <Option value="batch_Status">Status</Option>
+              </Select>
+              <Input.Search 
+                placeholder="Search products..." 
+                style={{ width: '60%' }} 
+                allowClear
+                onSearch={value => setSearchText(value)}
+                onChange={e => setSearchText(e.target.value)}
+                value={searchText}
+              />
+            </Input.Group>
+          </div>
+
+          <Table
+            className="product-table"
+            columns={columns}
+            dataSource={filteredProducts}
+            rowKey="product_ID"
+            loading={loading}
+            scroll={{ x: true }}
+            size={screens.xs ? 'small' : 'middle'}
+            pagination={{
+              pageSize: screens.xs ? 5 : 10,
+              showSizeChanger: true,
+              showTotal: (total) => `Total ${total} products`,
+              responsive: true,
+              style: { marginTop: '16px' }
+            }}
+            onRow={(record) => ({
+              style: {
+                cursor: 'pointer',
+                transition: 'background-color 0.3s',
+              },
+              onClick: () => handleEdit(record),
+            })}
+          />
+        </Card>
+
+
+        </div>
+        </Layout>
+  );
 };
