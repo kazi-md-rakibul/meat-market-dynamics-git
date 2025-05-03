@@ -348,6 +348,52 @@ const ProductionDashboard = () => {
             ),
         },
     ];
+    return (
+        <Layout>
+            <div>
+                <h1>Production Batches</h1>
+
+                <Row gutter={16} style={{ marginBottom: '24px' }}>
+                    <Col span={6}>
+                        <Card>
+                            <Statistic
+                                title="Total Batches"
+                                value={stats.totalBatches}
+                                loading={loading}
+                            />
+                        </Card>
+                    </Col>
+                    <Col span={6}>
+                        <Card>
+                            <Statistic
+                                title="Total Weight (kg)"
+                                value={stats.totalWeight.toFixed(2)}
+                                loading={loading}
+                            />
+                        </Card>
+                    </Col>
+                    <Col span={6}>
+                        <Card>
+                            <Statistic
+                                title="In Transit"
+                                value={stats.inTransit}
+                                loading={loading}
+                            />
+                        </Card>
+                    </Col>
+                    <Col span={6}>
+                        <Card>
+                            <Statistic
+                                title="In Storage"
+                                value={stats.inStorage}
+                                loading={loading}
+                            />
+                        </Card>
+                    </Col>
+                </Row>
+                </div>
+                </Layout>
+    );
 
 
 };
