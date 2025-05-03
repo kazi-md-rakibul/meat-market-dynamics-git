@@ -116,5 +116,79 @@ const ProcessingUnitList = () => {
             </div>
         );
     };
-    
+    const columns = [
+        {
+            title: 'ID',
+            dataIndex: 'unit_ID',
+            key: 'unit_ID',
+            sorter: (a, b) => a.unit_ID - b.unit_ID,
+            sortOrder: sortedInfo.columnKey === 'unit_ID' && sortedInfo.order,
+            render: id => <Tag color="blue">{id}</Tag>
+        },
+        {
+            title: 'Facility Name',
+            dataIndex: 'facility_Name',
+            key: 'facility_Name',
+            sorter: (a, b) => a.facility_Name.localeCompare(b.facility_Name),
+            sortOrder: sortedInfo.columnKey === 'facility_Name' && sortedInfo.order,
+            render: name => <Text strong>{name}</Text>
+        },
+        {
+            title: 'Capacity (kg)',
+            dataIndex: 'processing_Capacity',
+            key: 'processing_Capacity',
+            sorter: (a, b) => a.processing_Capacity - b.processing_Capacity,
+            sortOrder: sortedInfo.columnKey === 'processing_Capacity' && sortedInfo.order,
+            render: capacity => renderCapacityBar(capacity)
+        },
+        {
+            title: 'Processing Date',
+            dataIndex: 'processing_Date',
+            key: 'processing_Date',
+            sorter: (a, b) => new Date(a.processing_Date) - new Date(b.processing_Date),
+            sortOrder: sortedInfo.columnKey === 'processing_Date' && sortedInfo.order,
+            render: date => {
+                if (!date) return <Tag color="error">N/A</Tag>;
+                
+                const processDate = new Date(date);
+                const today = new Date();
+                const isPast = processDate < today;
+                const isFuture = processDate > today;
+                const isToday = processDate.toDateString() === today.toDateString();
+                
+                let color = 'default';
+                if (isPast) color = 'success';
+                if (isToday) color = 'processing';
+                if (isFuture) color = 'warning';
+                
+                return <Tag color={color}>{new Date(date).toLocaleDateString()}</Tag>;
+            }
+        },
+        {
+            title: 'Actions',
+            key: 'actions',
+            render: (_, record) => (
+                <Space size="small">
+                    <Tooltip title="Edit Unit">
+                        <Link to={`/processing-units/edit/${record.unit_ID}`}>
+                            <Button type="primary" icon={<EditOutlined />} size="small" />
+                        </Link>
+                    </Tooltip>
+                    <Tooltip title="Delete Unit">
+                        <Popconfirm
+                            title="Are you sure you want to delete this processing unit?"
+                            description="This action cannot be undone."
+                            onConfirm={() => handleDelete(record.unit_ID)}
+                            okText="Yes"
+                            cancelText="No"
+                            placement="left"
+                            okButtonProps={{ danger: true }}
+                        >
+                            <Button danger icon={<DeleteOutlined />} size="small" />
+                        </Popconfirm>
+                    </Tooltip>
+                </Space>
+            ),
+        },
+    ];
 };
