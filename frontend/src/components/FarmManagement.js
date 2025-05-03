@@ -217,6 +217,14 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
       setSearchQuery(e.target.value);
       setPage(0);
     };
+
+     // Filter farms based on search query
+  const filteredFarms = farms.filter(farm => 
+    farm.farm_Name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    farm.livestock_Type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    farm.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    farm.contact_info.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   
 
   
