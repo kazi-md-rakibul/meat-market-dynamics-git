@@ -574,5 +574,5 @@ const ProductionDashboard = () => {
                 </Layout>
     );
 
-
 };
+export default ProductionDashboard;
