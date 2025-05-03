@@ -512,6 +512,98 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={filteredFarms.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        sx={{
+          '.MuiTablePagination-select': {
+            borderRadius: '8px',
+          },
+          '.MuiTablePagination-selectIcon': {
+            color: theme.palette.primary.main,
+          }
+        }}
+      />
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert 
+          onClose={() => setSnackbar({ ...snackbar, open: false })} 
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ borderRadius: '10px' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+
+      <Dialog 
+        open={open} 
+        onClose={loading ? undefined : handleClose} 
+        maxWidth="md" 
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '16px',
+            overflow: 'hidden'
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          bgcolor: '#4f46e5', 
+          color: 'white',
+          py: 2
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <AgricultureIcon sx={{ mr: 1.5 }} />
+            <Typography variant="h6">
+              {selectedFarm ? 'Edit Farm' : 'Add New Farm'}
+            </Typography>
+          </Box>
+        </DialogTitle>
+        
+        {loading && (
+          <LinearProgress sx={{ height: 2 }} />
+        )}
+        
+        <DialogContent sx={{ pt: 3 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                name="farm_Name"
+                label="Farm Name"
+                value={formData.farm_Name}
+                onChange={handleChange}
+                fullWidth
+                required
+                variant="outlined"
+                InputProps={{
+                  sx: { borderRadius: '10px' }
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                name="livestock_Type"
+                label="Livestock Type"
+                value={formData.livestock_Type}
+                onChange={handleChange}
+                fullWidth
+                required
+                variant="outlined"
+                InputProps={{
+                  sx: { borderRadius: '10px' }
+                }}
+              />
+               </Grid>
 
 
   
