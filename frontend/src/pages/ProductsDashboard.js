@@ -173,7 +173,62 @@ const ProductDashboard = () => {
               );
             },
           },
-
-
+          {
+            title: 'Status',
+            dataIndex: 'batch_Status',
+            key: 'batch_Status',
+            width: 100,
+            render: (status) => {
+              let color = '';
+              let bgColor = '';
+              let icon = '';
+              
+              switch (status?.toLowerCase()) {
+                case 'transit': 
+                  color = '#1d4ed8'; 
+                  bgColor = '#dbeafe';
+                  icon = '🚚';
+                  break;
+                case 'stored': 
+                  color = '#15803d'; 
+                  bgColor = '#dcfce7';
+                  icon = '📦';
+                  break;
+                case 'sold': 
+                  color = '#b91c1c'; 
+                  bgColor = '#fee2e2';
+                  icon = '💰';
+                  break;
+                default: 
+                  color = '#525252'; 
+                  bgColor = '#f5f5f5';
+                  icon = '❓';
+              }
+              
+              return (
+                <Tag 
+                  style={{
+                    color: color,
+                    backgroundColor: bgColor,
+                    border: `1px solid ${color}20`,
+                    borderRadius: '4px',
+                    padding: '0 8px',
+                    fontWeight: 500,
+                    textTransform: 'capitalize'
+                  }}
+                >
+                  <span style={{ marginRight: '4px' }}>{icon}</span>
+                  {status}
+                </Tag>
+              );
+            },
+            filters: [
+              { text: 'Transit', value: 'transit' },
+              { text: 'Stored', value: 'stored' },
+              { text: 'Sold', value: 'sold' },
+            ],
+            onFilter: (value, record) => record.batch_Status?.toLowerCase() === value,
+          }
     ]
+    
 };
