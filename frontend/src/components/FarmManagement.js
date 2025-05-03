@@ -459,6 +459,60 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
                             whiteSpace: 'nowrap'
                           }}
                           >
+                              {farm.address}
+                        </Typography>
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        {farm.contact_info}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
+                          <Tooltip title="Edit Farm">
+                            <IconButton
+                              size="small"
+                              color="primary"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpen(farm);
+                              }}
+                              sx={{ 
+                                backgroundColor: 'rgba(79, 70, 229, 0.08)',
+                                '&:hover': {
+                                  backgroundColor: 'rgba(79, 70, 229, 0.12)',
+                                }
+                              }}
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Delete Farm">
+                            <IconButton
+                              size="small"
+                              color="error"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(farm.farm_ID);
+                              }}
+                              sx={{ 
+                                backgroundColor: 'rgba(239, 68, 68, 0.08)',
+                                '&:hover': {
+                                  backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                                }
+                              }}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  );
+                })
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
 
   
 
