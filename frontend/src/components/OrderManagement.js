@@ -504,6 +504,263 @@ const OrderManagement = () => {
               </Button>
             </Box>
           </Box>
+
+          <Box sx={{ display: 'flex', mb: 3, gap: 2, flexWrap: 'wrap' }}>
+          <TextField
+            size="small"
+            placeholder="Search orders..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            sx={{ minWidth: 250, flex: 1 }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="action" />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <Select
+              value={statusFilter}
+              onChange={handleStatusFilterChange}
+              displayEmpty
+            >
+              <MenuItem value="all">All Statuses</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
+              <MenuItem value="scheduled">Scheduled</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow sx={{ '& th': { fontWeight: 'bold', bgcolor: 'background.paper' } }}>
+                <TableCell 
+                  onClick={() => requestSort('order_ID')}
+                  sx={{ cursor: 'pointer' }}
+                >
+                  Order ID
+                  {sortConfig.key === 'order_ID' && (
+                    <span>{sortConfig.direction === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </TableCell>
+                <TableCell 
+                  onClick={() => requestSort('order_date')}
+                  sx={{ cursor: 'pointer' }}
+                >
+                  Date
+                  {sortConfig.key === 'order_date' && (
+                    <span>{sortConfig.direction === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </TableCell>
+                <TableCell 
+                  onClick={() => requestSort('consumer_ID')}
+                  sx={{ cursor: 'pointer' }}
+                >
+                  Consumer ID
+                  {sortConfig.key === 'consumer_ID' && (
+                    <span>{sortConfig.direction === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </TableCell>
+                <TableCell 
+                  onClick={() => requestSort('total_price')}
+                  sx={{ cursor: 'pointer' }}
+                >
+                  Total Price
+                  {sortConfig.key === 'total_price' && (
+                    <span>{sortConfig.direction === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </TableCell>
+                <TableCell 
+                  onClick={() => requestSort('quantity')}
+                  sx={{ cursor: 'pointer' }}
+                >
+                  Quantity
+                  {sortConfig.key === 'quantity' && (
+                    <span>{sortConfig.direction === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </TableCell>
+                <TableCell 
+                  onClick={() => requestSort('delivery_ID')}
+                  sx={{ cursor: 'pointer' }}
+                >
+                  Delivery Status
+                  {sortConfig.key === 'delivery_ID' && (
+                    <span>{sortConfig.direction === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {tableLoading ? (
+                <TableRow>
+                  <TableCell colSpan={7} align="center" sx={{ py: 5 }}>
+                    <CircularProgress size={40} />
+                    <Typography variant="body2" sx={{ mt: 2 }}>Loading orders...</Typography>
+                  </TableCell>
+                </TableRow>
+              ) : filteredOrders.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} align="center" sx={{ py: 5 }}>
+                    <Typography variant="body1">No orders found</Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      {searchTerm ? 'Try a different search term' : 'Create a new order to get started'}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                paginatedOrders.map((order) => (
+                  <TableRow key={order.order_ID} hover>
+                    <TableCell sx={{ fontWeight: 'medium' }}>{order.order_ID}</TableCell>
+                    <TableCell>
+                      {new Date(order.order_date).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      {order.consumer_ID || 'N/A'}
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'medium' }}>${parseFloat(order.total_price).toFixed(2)}</TableCell>
+                    <TableCell>{order.quantity}</TableCell>
+                    <TableCell>
+                      <Chip
+                        icon={order.delivery_ID ? <ShippingIcon fontSize="small" /> : null}
+                        label={order.delivery_ID ? 'Scheduled' : 'Pending'}
+                        color={order.delivery_ID ? 'success' : 'warning'}
+                        size="small"
+                        sx={{ fontWeight: 'medium' }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Tooltip title="Edit Order">
+                          <IconButton
+                            color="primary"
+                            onClick={() => handleOpen(order)}
+                            size="small"
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete Order">
+                          <IconButton
+                            color="error"
+                            onClick={() => handleDeleteConfirm(order.order_ID)}
+                            size="small"
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredOrders.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
+
+      <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
+        <DialogTitle sx={{ pb: 1, fontSize: 24, fontWeight: 500 }}>
+          {selectedOrder ? 'Edit Order' : 'Create New Order'}
+        </DialogTitle>
+        <Divider />
+        <DialogContent sx={{ pt: 4, pb: 5 }}>
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+              Please fill in the order information below
+            </Typography>
+          </Box>
+          
+          <Box sx={{ display: 'grid', gap: 4 }}>
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="h6" sx={{ mb: 3, color: 'primary.main', fontWeight: 500 }}>
+                Order Information
+              </Typography>
+              <Grid container spacing={4}>
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ mb: 1 }}>
+                    <Typography variant="subtitle2" component="label" htmlFor="order-date" sx={{ fontWeight: 500 }}>
+                      Order Date *
+                    </Typography>
+                  </Box>
+                  <TextField
+                    id="order-date"
+                    fullWidth
+                    name="order_date"
+                    type="date"
+                    value={formData.order_date}
+                    onChange={handleChange}
+                    variant="outlined"
+                    InputProps={{
+                      sx: { height: 56 }
+                    }}
+                    error={!!formErrors.order_date}
+                    helperText={formErrors.order_date}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ mb: 1 }}>
+                    <Typography variant="subtitle2" component="label" htmlFor="consumer-select" sx={{ fontWeight: 500 }}>
+                      Consumer *
+                    </Typography>
+                  </Box>
+                  <FormControl 
+                    fullWidth 
+                    error={!!formErrors.consumer_ID} 
+                    variant="outlined"
+                  >
+                    <Select
+                      id="consumer-select"
+                      name="consumer_ID"
+                      value={formData.consumer_ID}
+                      onChange={handleChange}
+                      displayEmpty
+                      sx={{ height: 56, fontSize: '1rem' }}
+                    >
+                      <MenuItem disabled value="">
+                        <em>Select consumer</em>
+                      </MenuItem>
+                      {consumers.map((consumer) => (
+                        <MenuItem key={consumer.consumer_ID} value={consumer.consumer_ID}>
+                          {consumer.consumer_name || 'Consumer'} {consumer.consumer_ID}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {formErrors.consumer_ID && (
+                      <FormHelperText error>{formErrors.consumer_ID}</FormHelperText>
+                    )}
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </Box>
+
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="h6" sx={{ mb: 1, color: 'primary.main', fontWeight: 500 }}>
+                Products {formErrors.products && (
+                  <Typography color="error" variant="caption" sx={{ ml: 1 }}>
+                    ({formErrors.products})
+                  </Typography>
+                )}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                Select products and quantities for this order
+              </Typography>
+            </Box>
+
+      
   
       
 
