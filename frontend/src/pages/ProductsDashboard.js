@@ -361,7 +361,94 @@ const actionColumn = {
       setLoading(false);
     }
   };
-  
 
+const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    form.resetFields();
+  };
+
+  const handleEditCancel = () => {
+    setIsEditModalVisible(false);
+    editForm.resetFields();
+    setEditingProduct(null);
+  };
+
+  const onFinish = async (values) => {
+    try {
+      setLoading(true);
+      const productData = {
+        ...values,
+        processing_Date: values.processing_Date.format('YYYY-MM-DD'),
+        expiration_Date: values.expiration_Date.format('YYYY-MM-DD'),
+        batch_ID: values.batch_ID ? Number(values.batch_ID) : null
+      };
+
+      const response = await axios.post('http://localhost:5000/api/createProducts', productData);
+      message.success(response.data.message || 'Product added successfully');
+      setIsModalVisible(false);
+      form.resetFields();
+      fetchProducts();
+    } catch (error) {
+      console.error('Error creating product:', error);
+      const errorMessage = error.response?.data?.message ||
+        error.response?.data?.sqlMessage ||
+        'Failed to add product';
+      message.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleEdit = (product) => {
+    setEditingProduct(product);
+    editForm.setFieldsValue({
+      ...product,
+      processing_Date: moment(product.processing_Date),
+      expiration_Date: moment(product.expiration_Date)
+    });
+    setIsEditModalVisible(true);
+  };
+  const handleEditSubmit = async (values) => {
+    try {
+      setLoading(true);
+      const productData = {
+        ...values,
+        processing_Date: values.processing_Date.format('YYYY-MM-DD'),
+        expiration_Date: values.expiration_Date.format('YYYY-MM-DD'),
+        batch_ID: values.batch_ID ? Number(values.batch_ID) : null
+      };
+
+      await axios.post(`http://localhost:5000/api/edit-product`, {productData,productId:editingProduct.product_ID});
+      message.success('Product updated successfully');
+      setIsEditModalVisible(false);
+      editForm.resetFields();
+      setEditingProduct(null);
+      fetchProducts();
+    } catch (error) {
+      console.error('Error updating product:', error);
+      const errorMessage = error.response?.data?.message ||
+        error.response?.data?.sqlMessage ||
+        'Failed to update product';
+      message.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleDelete = async (productId) => {
+    try {
+      setLoading(true);
+      await axios.post(`http://localhost:5000/api/delete-product`,{product_ID:productId});
+      message.success('Product deleted successfully');
+      fetchProducts();
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      message.error(error.response?.data?.message || 'Failed to delete product');
+    } finally {
+      setLoading(false);
+    }
+  };
 
 };
