@@ -242,7 +242,9 @@ const SupplyDashboard = () => {
     
     setUtilizationData(utilizationChartData);
   };
-
+  useEffect(() => {
+    fetchWarehouses();
+  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
 
 
