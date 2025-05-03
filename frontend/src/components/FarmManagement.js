@@ -76,16 +76,16 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
   }));
  const FarmManagement = () => {
-    const theme = useTheme();
-    const [farms, setFarms] = useState([]);
-    const [open, setOpen] = useState(false);
-    const [selectedFarm, setSelectedFarm] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [formData, setFormData] = useState({
+  const theme = useTheme();
+  const [farms, setFarms] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [selectedFarm, setSelectedFarm] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [formData, setFormData] = useState({
       farm_Name: '',
       livestock_Type: '',
       available_Stock: 0,
@@ -96,7 +96,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   
     useEffect(() => {
       fetchFarms();
-    }, []);
+    }, []);}
   
     const fetchFarms = async () => {
       setLoading(true);
@@ -115,6 +115,33 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
         setLoading(false);
       }
     };
+
+    const handleOpen = (farm = null) => {
+      if (farm) {
+        setSelectedFarm(farm);
+        setFormData({
+          farm_Name: farm.farm_Name,
+          livestock_Type: farm.livestock_Type,
+          available_Stock: farm.available_Stock,
+          address: farm.address,
+          number_of_Livestock: farm.number_of_Livestock,
+          contact_info: farm.contact_info,
+        });
+      } else {
+        setSelectedFarm(null);
+        setFormData({
+          farm_Name: '',
+          livestock_Type: '',
+          available_Stock: 0,
+          address: '',
+          number_of_Livestock: 0,
+          contact_info: '',
+        });
+      }
+      setOpen(true);
+    };
+  
+
   
 
  
