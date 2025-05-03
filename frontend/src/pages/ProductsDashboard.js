@@ -90,8 +90,90 @@ const ProductDashboard = () => {
             </div>
           ),
         },
+        {
+            title: 'Type',
+            dataIndex: 'meat_Type',
+            key: 'meat_Type',
+            width: 100,
+            filters: [
+              { text: 'Beef', value: 'Beef' },
+              { text: 'Pork', value: 'Pork' },
+              { text: 'Chicken', value: 'Chicken' },
+              { text: 'Lamb', value: 'Lamb' },
+              { text: 'Turkey', value: 'Turkey' },
+            ],
+            onFilter: (value, record) => record.meat_Type === value,
+          },
+          {
+            title: 'Price',
+            dataIndex: 'price_Per_Unit',
+            key: 'price_Per_Unit',
+            width: 100,
+            render: (price) => {
+              const priceNum = typeof price === 'string' ? parseFloat(price) : price;
+              return (
+                <span style={{ 
+                  fontWeight: 600, 
+                  color: '#047857',
+                  backgroundColor: '#ecfdf5',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  fontSize: '0.9em'
+                }}>
+                  ${!isNaN(priceNum) ? priceNum.toFixed(2) : '0.00'}
+                </span>
+              );
+            },
+            sorter: (a, b) => {
+              const priceA = typeof a.price_Per_Unit === 'string' ? parseFloat(a.price_Per_Unit) : a.price_Per_Unit;
+              const priceB = typeof b.price_Per_Unit === 'string' ? parseFloat(b.price_Per_Unit) : b.price_Per_Unit;
+              return (priceA || 0) - (priceB || 0);
+            },
+          },
+          {
+            title: 'Stock',
+            dataIndex: 'stock_Availability',
+            key: 'stock_Availability',
+            width: 80,
+            sorter: (a, b) => a.stock_Availability - b.stock_Availability,
+            render: (stock) => {
+              let color = '#000';
+              let bgColor = '#f5f5f5';
+              
+              if (stock <= 5) {
+                color = '#b91c1c';
+                bgColor = '#fee2e2';
+              } else if (stock <= 20) {
+                color = '#ca8a04';
+                bgColor = '#fef9c3';
+              } else {
+                color = '#15803d';
+                bgColor = '#dcfce7';
+              }
+              
+              return (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}>
+                  <div style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: color
+                  }} />
+                  <span style={{ 
+                    color: color,
+                    fontWeight: 600
+                  }}>
+                    {stock}
+                  </span>
+                </div>
+              );
+            },
+          },
 
 
-        
     ]
 };
