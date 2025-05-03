@@ -225,6 +225,241 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     farm.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
     farm.contact_info.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  // Get stock status based on available vs total
+  const getStockStatus = (available, total) => {
+    const ratio = available / total;
+    if (ratio >= 0.75) return { color: 'success', label: 'High', icon: <CheckCircleIcon fontSize="small" /> };
+    if (ratio >= 0.35) return { color: 'warning', label: 'Medium', icon: <InfoIcon fontSize="small" /> };
+    return { color: 'error', label: 'Low', icon: <WarningIcon fontSize="small" /> };
+  };
+
+  return (
+    <Paper
+      sx={{ 
+        p: 3, 
+        borderRadius: '16px',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}
+    >
+      {loading && (
+        <LinearProgress 
+          sx={{ 
+            position: 'absolute', 
+            top: 0, 
+            left: 0, 
+            width: '100%', 
+            zIndex: 9999,
+            borderTopLeftRadius: '16px',
+            borderTopRightRadius: '16px',
+          }} 
+        />
+      )}
+      
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: { xs: 'column', md: 'row' },
+        justifyContent: 'space-between', 
+        alignItems: { xs: 'flex-start', md: 'center' },
+        mb: 3,
+        gap: 2
+      }}>
+        <Typography 
+          variant="h5" 
+          component="h2" 
+          sx={{ 
+            fontWeight: 600,
+            color: '#1a1a1a',
+            display: 'flex', 
+            alignItems: 'center'
+          }}
+        >
+          <AgricultureIcon 
+            sx={{ 
+              mr: 1.5, 
+              color: '#4f46e5',
+              fontSize: 28 
+            }} 
+          />
+          Farm Management
+        </Typography>
+
+        <Box sx={{ 
+          display: 'flex', 
+          gap: 1, 
+          flexWrap: 'wrap',
+          alignItems: 'center'
+        }}>
+          <TextField
+            placeholder="Search farms..."
+            size="small"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            sx={{ 
+              width: { xs: '100%', sm: '200px' },
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '10px',
+              }
+            }}
+            InputProps={{
+              startAdornment: <SearchIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />,
+            }}
+          />
+          
+          <Tooltip title="Refresh Data">
+            <IconButton 
+              color="primary" 
+              onClick={fetchFarms}
+              sx={{ 
+                backgroundColor: 'rgba(79, 70, 229, 0.08)',
+                borderRadius: '10px',
+                '&:hover': {
+                  backgroundColor: 'rgba(79, 70, 229, 0.12)',
+                }
+              }}
+            >
+              <RefreshIcon />
+            </IconButton>
+          </Tooltip>
+          
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => handleOpen()}
+            sx={{ 
+              borderRadius: '10px',
+              textTransform: 'none',
+              boxShadow: '0 4px 10px rgba(79, 70, 229, 0.2)',
+              '&:hover': {
+                boxShadow: '0 6px 15px rgba(79, 70, 229, 0.3)',
+              }
+            }}
+          >
+            Add New Farm
+          </Button>
+        </Box>
+      </Box>
+
+      <Divider sx={{ mt: 1, mb: 3, borderColor: 'rgba(0, 0, 0, 0.08)' }} />
+      
+      <TableContainer 
+        component={Paper} 
+        elevation={0}
+        sx={{ 
+          borderRadius: '12px',
+          border: '1px solid rgba(0, 0, 0, 0.12)',
+          mb: 2,
+        }}
+      >
+        <Table aria-label="farms table" stickyHeader>
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>Farm Name</StyledTableCell>
+              <StyledTableCell>Livestock Type</StyledTableCell>
+              <StyledTableCell>Stock Status</StyledTableCell>
+              <StyledTableCell>Available Stock</StyledTableCell>
+              <StyledTableCell>Total Livestock</StyledTableCell>
+              <StyledTableCell>Address</StyledTableCell>
+              <StyledTableCell>Contact Info</StyledTableCell>
+              <StyledTableCell align="center">Actions</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {loading && farms.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} align="center" sx={{ py: 10 }}>
+                  <Typography variant="body1" color="text.secondary">
+                    Loading farms...
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            ) : filteredFarms.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} align="center" sx={{ py: 10 }}>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center',
+                    p: 3
+                  }}>
+                    <AgricultureIcon 
+                      sx={{ 
+                        fontSize: 48, 
+                        mb: 2, 
+                        color: 'rgba(0, 0, 0, 0.2)' 
+                      }} 
+                    />
+                    <Typography variant="h6" color="text.secondary" gutterBottom>
+                      {searchQuery ? 'No farms match your search' : 'No farms available'}
+                    </Typography>
+                    
+                    {searchQuery ? (
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={() => setSearchQuery('')}
+                        sx={{ mt: 1, borderRadius: '8px', textTransform: 'none' }}
+                      >
+                        Clear Search
+                      </Button>
+                    ) : (
+                      <Typography variant="body2" color="text.secondary">
+                        Add your first farm to get started
+                      </Typography>
+                    )}
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredFarms
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((farm) => {
+                  const stockStatus = getStockStatus(farm.available_Stock, farm.number_of_Livestock);
+                  
+                  return (
+                    <StyledTableRow key={farm.farm_ID} onClick={() => handleOpen(farm)}>
+                      <StyledTableCell>
+                        <Typography variant="body2" fontWeight={500}>
+                          {farm.farm_Name}
+                        </Typography>
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <Chip
+                          label={farm.livestock_Type}
+                          color="primary"
+                          variant="outlined"
+                          size="small"
+                          sx={{ borderRadius: '6px' }}
+                        />
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <Chip
+                          icon={stockStatus.icon}
+                          label={stockStatus.label}
+                          color={stockStatus.color}
+                          size="small"
+                          sx={{ borderRadius: '6px' }}
+                        />
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        {farm.available_Stock}
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        {farm.number_of_Livestock}
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <Typography 
+                          variant="body2" 
+                          sx={{ 
+                            maxWidth: '220px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
+                          }}
+                          >
+
   
 
   
