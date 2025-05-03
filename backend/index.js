@@ -17,7 +17,7 @@ app.use('/api', routes);
 app.use('/api/farms', farmRoutes);
 app.use('/api/consumers-direct', consumerRoutes);
 
-// Health check route
+// Health check route 
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'healthy' });
 });
