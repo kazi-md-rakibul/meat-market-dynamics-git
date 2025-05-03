@@ -246,6 +246,80 @@ const SupplyDashboard = () => {
     fetchWarehouses();
   }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
+  const warehouseColumns = [
+    {
+      title: 'ID',
+      dataIndex: 'warehouse_ID',
+      key: 'warehouse_id',
+      sorter: (a, b) => a.warehouse_ID - b.warehouse_ID,
+    },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      key: 'address',
+      sorter: (a, b) => a.address.localeCompare(b.address),
+    },
+    {
+      title: 'Current Stock',
+      dataIndex: 'current_Stock',
+      key: 'current_stock',
+      sorter: (a, b) => a.current_Stock - b.current_Stock,
+    },
+    {
+      title: 'Capacity',
+      dataIndex: 'capacity',
+      key: 'capacity',
+      sorter: (a, b) => a.capacity - b.capacity,
+    },
+    {
+      title: 'Storage Condition',
+      dataIndex: 'storage_Condition',
+      key: 'storage_condition',
+      filters: [
+        { text: 'Refrigerated', value: 'Refrigerated' },
+        { text: 'Frozen', value: 'Frozen' },
+        { text: 'Dry Storage', value: 'Dry Storage' },
+        { text: 'Controlled Atmosphere', value: 'Controlled Atmosphere' },
+      ],
+      onFilter: (value, record) => record.storage_Condition === value,
+    },
+    {
+      title: 'Utilization',
+      key: 'utilization',
+      render: (_, record) => {
+        const percent = Math.round((record.current_Stock / record.capacity) * 100);
+        return (
+          <Progress 
+            percent={percent} 
+            size="small" 
+            status={percent > 90 ? 'exception' : percent > 70 ? 'warning' : 'normal'}
+          />
+        );
+      },
+      sorter: (a, b) => (a.current_Stock / a.capacity) - (b.current_Stock / b.capacity),
+    },
+    {
+      title: 'Created At',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (date) => moment(date).format('YYYY-MM-DD HH:mm'),
+      sorter: (a, b) => new Date(a.created_at) - new Date(b.created_at),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <Button type="primary" onClick={() => handleEditWarehouse(record)}>
+            Edit
+          </Button>
+          <Button danger onClick={() => handleDeleteWarehouse(record.warehouse_ID)}>
+            Delete
+          </Button>
+        </div>
+      ),
+    },
+  ];
 
 
 
