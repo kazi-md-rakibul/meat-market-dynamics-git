@@ -66,5 +66,55 @@ const ProcessingUnitList = () => {
             console.error('Delete error:', error);
         }
     };
+    useEffect(() => {
+        fetchUnits();
+    }, []);
 
+    const handleSearch = (value) => {
+        setSearchText(value);
+        if (!value) {
+            setFilteredUnits(units);
+            return;
+        }
+        
+        const searchLower = value.toLowerCase();
+        const filtered = units.filter(unit => 
+            unit.unit_ID?.toString().includes(searchLower) ||
+            unit.facility_Name?.toLowerCase().includes(searchLower) ||
+            unit.processing_Capacity?.toString().includes(searchLower)
+        );
+        setFilteredUnits(filtered);
+    };
+
+    const handleTableChange = (pagination, filters, sorter) => {
+        setSortedInfo(sorter);
+    };
+    const renderCapacityBar = (capacity) => {
+        // Determine color based on capacity
+        let color = '#52c41a'; // Green by default
+        if (capacity < 500) color = '#ff4d4f'; // Red for low capacity
+        else if (capacity < 1000) color = '#faad14'; // Yellow for medium capacity
+        
+        return (
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ 
+                    width: '80px', 
+                    height: '8px', 
+                    backgroundColor: '#f0f0f0', 
+                    borderRadius: '4px', 
+                    overflow: 'hidden',
+                    marginRight: '8px'
+                }}>
+                    <div style={{ 
+                        width: `${Math.min(capacity / 20, 100)}%`, 
+                        height: '100%', 
+                        backgroundColor: color,
+                        borderRadius: '4px'
+                    }} />
+                </div>
+                <span>{capacity} kg</span>
+            </div>
+        );
+    };
+    
 };
