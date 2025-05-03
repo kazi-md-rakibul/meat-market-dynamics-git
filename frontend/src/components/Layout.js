@@ -217,6 +217,337 @@ const colors = {
     sidebarActiveText: '#1e40af', // Indigo-800
     border: '#e2e8f0',        // Gray-200
   };
+
+  // Enhanced Professional Styles
+const styles = {
+    container: {
+      display: 'flex',
+      minHeight: '100vh',
+      backgroundColor: colors.background,
+      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+      overflowX: 'hidden',
+    },
+    sidebar: {
+      position: 'fixed',
+      height: '100vh',
+      backgroundColor: colors.sidebarBg,
+      color: colors.sidebarText,
+      transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+      display: 'flex',
+      flexDirection: 'column',
+      zIndex: 100,
+      overflow: 'hidden',
+      borderRight: `1px solid ${colors.border}`,
+    },
+    mobileSidebar: {
+      width: '280px',
+      height: '100vh',
+      backgroundColor: colors.sidebarBg,
+      color: colors.sidebarText,
+      display: 'flex',
+      flexDirection: 'column',
+      borderRight: `1px solid ${colors.border}`,
+    },
+    mobileOverlay: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0,0,0,0.3)',
+      zIndex: 1000,
+      display: 'flex',
+      backdropFilter: 'blur(4px)',
+    },
+    sidebarHeader: {
+      padding: '1.5rem',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderBottom: `1px solid ${colors.border}`,
+      minHeight: '64px',
+    },
+    logo: {
+      margin: 0,
+      fontSize: '1.25rem',
+      fontWeight: 600,
+      color: colors.textPrimary,
+      letterSpacing: '0.5px',
+    },
+    toggleButton: {
+      background: 'transparent',
+      border: 'none',
+      color: colors.textSecondary,
+      cursor: 'pointer',
+      fontSize: '1.25rem',
+      padding: '0.25rem',
+      borderRadius: '6px',
+      transition: 'all 0.2s ease',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '32px',
+      height: '32px',
+      ':hover': {
+        backgroundColor: colors.sidebarHover,
+      },
+    },
+    toggleIcon: {
+      display: 'inline-block',
+      transition: 'transform 0.2s ease',
+    },
+    closeButton: {
+      background: 'transparent',
+      border: 'none',
+      color: colors.textSecondary,
+      cursor: 'pointer',
+      fontSize: '1.5rem',
+      padding: '0.25rem 0.5rem',
+      borderRadius: '4px',
+      transition: 'all 0.2s ease',
+      ':hover': {
+        backgroundColor: colors.sidebarHover,
+      },
+    },
+    closeIcon: {
+      display: 'inline-block',
+      lineHeight: 1,
+    },
+    nav: {
+      flex: 1,
+      padding: '1rem 0',
+      overflowY: 'auto',
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    navLink: {
+      display: 'flex',
+      alignItems: 'center',
+      padding: '0.75rem 1.5rem',
+      color: colors.sidebarText,
+      textDecoration: 'none',
+      transition: 'all 0.2s ease',
+      margin: '0.125rem 0.5rem',
+      borderRadius: '6px',
+      fontSize: '0.9375rem',
+      fontWeight: 500,
+      ':hover': {
+        backgroundColor: colors.sidebarHover,
+        color: colors.textPrimary,
+      },
+    },
+    activeNavLink: {
+      backgroundColor: colors.activeItem,
+      color: colors.sidebarActiveText,
+      fontWeight: 600,
+    },
+    navText: {
+      transition: 'opacity 0.2s ease',
+    },
+    activeNavText: {
+      fontWeight: 600,
+    },
+    collapsedText: {
+      fontSize: '0.875rem',
+      fontWeight: 600,
+      color: colors.textPrimary,
+    },
+    sidebarFooter: {
+      padding: '1rem 1.5rem',
+      borderTop: `1px solid ${colors.border}`,
+    },
+    sidebarFooterContent: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.25rem',
+    },
+    footerText: {
+      margin: 0,
+      fontSize: '0.75rem',
+      color: colors.textSecondary,
+    },
+    mainContentWrapper: {
+      flex: 1,
+      transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+      width: '100%',
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    header: {
+      width: '100%',
+      backgroundColor: colors.headerBg,
+      boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+      borderBottom: `1px solid ${colors.headerBorder}`,
+      position: 'sticky',
+      top: 0,
+      zIndex: 90,
+    },
+    headerContent: {
+      maxWidth: '100%',
+      margin: '0 auto',
+      padding: '0 1.5rem',
+      height: '4rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    headerLeft: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '1rem',
+    },
+    menuButton: {
+      background: 'none',
+      border: 'none',
+      fontSize: '1.5rem',
+      cursor: 'pointer',
+      color: colors.textPrimary,
+      padding: '0.5rem',
+      marginRight: '1rem',
+      borderRadius: '6px',
+      transition: 'all 0.2s ease',
+      ':hover': {
+        backgroundColor: 'rgba(0,0,0,0.05)',
+      },
+    },
+    menuIcon: {
+      display: 'inline-block',
+      lineHeight: 1,
+    },
+    pageTitle: {
+      margin: 0,
+      fontSize: '1.25rem',
+      fontWeight: 600,
+      color: colors.textPrimary,
+    },
+    headerRight: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '1.5rem',
+    },
+    userProfile: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.75rem',
+      cursor: 'pointer',
+      padding: '0.25rem 0.5rem',
+      borderRadius: '6px',
+      transition: 'all 0.2s ease',
+      ':hover': {
+        backgroundColor: 'rgba(0,0,0,0.05)',
+      },
+    },
+    userAvatar: {
+      width: '2.5rem',
+      height: '2.5rem',
+      borderRadius: '50%',
+      backgroundColor: colors.primary,
+      color: colors.white,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontWeight: 600,
+      fontSize: '0.875rem',
+      background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.primaryDark} 100%)`,
+    },
+    userInfo: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    userName: {
+      fontSize: '0.875rem',
+      fontWeight: 600,
+      color: colors.textPrimary,
+    },
+    userRole: {
+      fontSize: '0.75rem',
+      color: colors.textSecondary,
+    },
+    logoutButton: {
+      backgroundColor: colors.primary,
+      color: colors.white,
+      border: 'none',
+      borderRadius: '5px',
+      padding: '0.5rem 1rem',
+      marginLeft: '1rem',
+      fontSize: '0.875rem',
+      fontWeight: '500',
+      cursor: 'pointer',
+      transition: 'background-color 0.3s ease',
+      ':hover': {
+        backgroundColor: colors.primaryDark,
+      }
+    },
+    content: {
+      flex: 1,
+      padding: '1.5rem',
+      backgroundColor: colors.background,
+    },
+    contentInner: {
+      maxWidth: '100%',
+      margin: '0 auto',
+      backgroundColor: colors.white,
+      borderRadius: '8px',
+      boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+      padding: '1.5rem',
+      minHeight: 'calc(100% - 3rem)',
+      border: `1px solid ${colors.border}`,
+    },
+  };
+  
+  const navItems = [
+    {
+      link: "/home/dashboard",
+      text: 'Dashboard',
+    },
+    {
+      link: "/processing-units/dashboard",
+      text: 'Processing Plants',
+      backendPath: '/processing-unit'
+    },
+    {
+      link: "/products/dashboard",
+      text: 'Product Catalog',
+      backendPath: '/products'
+    },
+    {
+      link: "/production/dashboard",
+      text: 'Production batches',
+      backendPath: '/production'
+    },
+    {
+      link: "/demand/dashboard",
+      text: 'Consumer Demand',
+      backendPath: '/demand'
+    },
+    {
+      link: "/supply/dashboard",
+      text: 'Supply & Warehouse',
+      backendPath: '/supply'
+    },
+    {
+      link: "/market-analysis/dashboard",
+      text: 'Price Analytics',
+      backendPath: '/market'
+    },
+    {
+      link: "/analytics/dashboard",
+      text: 'Reports & Trends',
+      backendPath: '/analytics'
+    },
+    {
+      link: "/directories/dashboard",
+      text: 'Vendor Directory',
+      backendPath: '/directory'
+    },
+    {
+      link: "/contact/dashboard",
+      text: 'Support & Help',
+    }
+  ];
+  
+  export default Layout;
     
 
     
