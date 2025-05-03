@@ -198,6 +198,25 @@ const Layout = ({ children }) => {
     </div>
   );
 };
+
+// Modern Professional Color Scheme
+const colors = {
+    primary: '#4f46e5',       // Indigo-600
+    primaryDark: '#4338ca',   // Indigo-700
+    primaryLight: '#6366f1',  // Indigo-500
+    background: '#f8fafc',    // Slate-50
+    sidebarBg: '#ffffff',     // White
+    sidebarHover: '#f1f5f9',  // Slate-100
+    activeItem: '#e0e7ff',    // Indigo-100
+    headerBg: '#ffffff',      // White
+    headerBorder: '#e2e8f0',  // Gray-200
+    textPrimary: '#0f172a',   // Slate-900
+    textSecondary: '#64748b', // Slate-500
+    white: '#ffffff',
+    sidebarText: '#334155',   // Slate-700
+    sidebarActiveText: '#1e40af', // Indigo-800
+    border: '#e2e8f0',        // Gray-200
+  };
     
 
     
