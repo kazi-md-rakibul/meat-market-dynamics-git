@@ -53,6 +53,45 @@ const ProductDashboard = () => {
   const [searchText, setSearchText] = useState('');
   const [searchCategory, setSearchCategory] = useState('product_name');
 
-  
+// Define base columns (shown on all screens)
+    const baseColumns = [
+        {
+          title: 'ID',
+          dataIndex: 'product_ID',
+          key: 'product_ID',
+          width: 80,
+          fixed: screens.md ? 'left' : false,
+          render: (id) => (
+            <span style={{ fontWeight: 600, color: '#4f46e5' }}>{id}</span>
+          ),
+        },
+        {
+          title: 'Product',
+          dataIndex: 'product_name',
+          key: 'product_name',
+          width: 150,
+          render: (name, record) => (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '6px',
+                backgroundColor: getMeatTypeColor(record.meat_Type),
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#fff',
+                fontWeight: 600,
+                fontSize: '14px'
+              }}>
+                {name.charAt(0)}
+              </div>
+              <span style={{ fontWeight: 500 }}>{name}</span>
+            </div>
+          ),
+        },
 
+
+        
+    ]
 };
