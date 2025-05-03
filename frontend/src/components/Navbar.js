@@ -75,3 +75,41 @@ const styles = {
       ':hover': {
         color: '#4f46e5',
       },
+      '::after': {
+      content: '""',
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      width: '0%',
+      height: '2px',
+      backgroundColor: '#4f46e5',
+      transition: 'width 0.3s ease',
+    },
+    ':hover::after': {
+      width: '100%',
+    }
+  },
+  authContainer: {
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+  loginButton: {
+    backgroundColor: '#4f46e5',
+    color: 'white',
+    padding: '0.6rem 1.2rem',
+    borderRadius: '8px',
+    textDecoration: 'none',
+    fontWeight: '500',
+    transition: 'all 0.3s ease',
+    border: '2px solid transparent',
+    ':hover': {
+      backgroundColor: 'transparent',
+      color: '#4f46e5',
+      border: '2px solid #4f46e5',
+      transform: 'translateY(-2px)',
+    }
+  }
+};
+
+export default Navbar;
