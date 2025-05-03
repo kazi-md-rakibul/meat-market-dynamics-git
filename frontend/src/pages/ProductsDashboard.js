@@ -477,7 +477,7 @@ const showModal = () => {
     return String(searchValue).toLowerCase().includes(searchText.toLowerCase());
   });
 
-  
+
   return (
     <Layout>
       <style>{tableCSS}</style>
@@ -579,7 +579,134 @@ const showModal = () => {
             })}
           />
         </Card>
+  {/* Add Product Modal */}
+        <Modal
+          title="Add New Product"
+          visible={isModalVisible}
+          onCancel={handleCancel}
+          footer={null}
+          width={screens.xs ? '90%' : '60%'}
+          bodyStyle={{
+            height: screens.xs ? '60vh' : '70vh',
+            overflowY: 'auto',
+            paddingRight: '8px'
+          }}
+        >
+            <Form
+            form={form}
+            layout="vertical"
+            onFinish={onFinish}
+          >
+            <Form.Item
+              name="product_name"
+              label="Product Name"
+              rules={[{ required: true, message: 'Please input the product name!' }]}
+            >
+              <Input />
+            </Form.Item>
 
+            <Form.Item
+              name="meat_Type"
+              label="Meat Type"
+              rules={[{ required: true, message: 'Please select the meat type!' }]}
+            >
+              <Select>
+                <Option value="Beef">Beef</Option>
+                <Option value="Pork">Pork</Option>
+                <Option value="Chicken">Chicken</Option>
+                <Option value="Lamb">Lamb</Option>
+                <Option value="Turkey">Turkey</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              name="origin"
+              label="Origin"
+              rules={[{ required: true, message: 'Please input the origin!' }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="cut_Type"
+              label="Cut Type"
+              rules={[{ required: true, message: 'Please input the cut type!' }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="seasonality"
+              label="Seasonality"
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="processing_Date"
+              label="Processing Date"
+              rules={[{ required: true, message: 'Please select the processing date!' }]}
+            >
+              <DatePicker style={{ width: '100%' }} />
+            </Form.Item>
+
+            <Form.Item
+              name="expiration_Date"
+              label="Expiration Date"
+              rules={[{ required: true, message: 'Please select the expiration date!' }]}
+            >
+              <DatePicker style={{ width: '100%' }} />
+            </Form.Item>
+
+            <Form.Item
+              name="weight_Per_Unit"
+              label="Weight Per Unit (kg)"
+              rules={[{ required: true, message: 'Please input the weight!' }]}
+            >
+              <Input type="number" step="0.01" />
+            </Form.Item>
+
+            <Form.Item
+              name="price_Per_Unit"
+              label="Price Per Unit ($)"
+              rules={[{ required: true, message: 'Please input the price!' }]}
+            >
+              <Input type="number" step="0.01" />
+            </Form.Item>
+
+            <Form.Item
+              name="stock_Availability"
+              label="Stock Availability"
+              rules={[{ required: true, message: 'Please input the stock quantity!' }]}
+            >
+              <Input type="number" />
+            </Form.Item>
+            <Form.Item
+              name="batch_ID"
+              label="Batch ID"
+              rules={[{ required: true, message: 'Please select a batch!' }]}
+            >
+              <Select placeholder="Select a batch">
+                {batchesId.map(id => (
+                  <Option key={id} value={id}>
+                    {`Batch ${id}`}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            <Form.Item>
+              <Button 
+                type="primary" 
+                htmlType="submit" 
+                loading={loading} 
+                block={screens.xs}
+                style={{ marginTop: '16px' }}
+              >
+                Submit
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
 
         </div>
         </Layout>
