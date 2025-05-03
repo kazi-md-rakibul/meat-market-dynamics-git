@@ -288,10 +288,38 @@ return (
                             style={{ maxWidth: '400px', width: '100%' }}
                         />
                     </div>
-
+                    <Table
+                        columns={columns}
+                        dataSource={filteredUnits}
+                        loading={loading}
+                        rowKey="unit_ID"
+                        pagination={{ 
+                            pageSize: 10,
+                            showSizeChanger: true,
+                            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} units`,
+                            pageSizeOptions: ['10', '20', '50']
+                        }}
+                        onChange={handleTableChange}
+                        locale={{ 
+                            emptyText: searchText ? (
+                                <Empty 
+                                    image={Empty.PRESENTED_IMAGE_SIMPLE} 
+                                    description="No matching processing units found"
+                                />
+                            ) : (
+                                <Empty 
+                                    description="No processing units found"
+                                />
+                            )
+                        }}
+                        scroll={{ x: 'max-content' }}
+                        style={{ borderRadius: '8px', overflow: 'hidden' }}
+                    />
                  </Card>
             </div>
         </Layout>
 );
 
 };
+
+export default ProcessingUnitList;
