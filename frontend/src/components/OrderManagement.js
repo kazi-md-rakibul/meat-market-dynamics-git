@@ -331,5 +331,22 @@ const OrderManagement = () => {
       handleDeleteCancel();
     }
   };
-     
-     
+
+  // Sort function for table data
+  const sortedOrders = React.useMemo(() => {
+    let sortableOrders = [...orders];
+    if (sortConfig.key) {
+      sortableOrders.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableOrders;
+  }, [orders, sortConfig]);
+
+       
