@@ -178,6 +178,78 @@ const ProductionDashboard = () => {
         });
         setIsModalVisible(true);
     };
+    const handleUpdate = async (values) => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/edit-batches`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    batchId: editingBatch.batch_ID,
+                    unit_ID: values.unit_ID,
+                    warehouse_ID: values.warehouse_ID,
+                    total_Weight: values.total_Weight,
+                    batch_Status: values.batch_Status,
+                    dateRange: [
+                        values.dateRange[0].format('YYYY-MM-DD'),
+                        values.dateRange[1].format('YYYY-MM-DD')
+                    ]
+                }),
+            });
+
+            if (response.ok) {
+                message.success('Batch updated successfully');
+                form.resetFields();
+                setIsModalVisible(false);
+                fetchBatches();
+            } else {
+                message.error('Failed to update batch');
+            }
+        } catch (error) {
+            console.error('Error updating batch:', error);
+            message.error('Error updating batch');
+        }
+    };
+    const handleDelete = async (batchId) => {
+
+        try {
+            const response = await axios.post('http://localhost:5000/api/delete-batches', {
+                batchId: batchId
+            });
+
+            if (response.status === 200) {
+                message.success('Batch deleted successfully');
+                fetchBatches();
+            } else {
+                message.error(response.data.message || 'Failed to delete batch');
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 400) {
+                message.error(error.response.data.message);
+            } else {
+                console.error('Error deleting batch:', error);
+                message.error('Error deleting batch');
+            }
+        }
+
+    };
+    const handleCancel = () => {
+        setIsModalVisible(false);
+        form.resetFields();
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                await Promise.all([fetchUnits(), fetchWarehouses(), fetchBatches()]);
+            } catch (error) {
+                console.error('Error loading data:', error);
+                message.error('Failed to load some data');
+            }
+        };
+        fetchData();
+    }, []);
 
 
 };
