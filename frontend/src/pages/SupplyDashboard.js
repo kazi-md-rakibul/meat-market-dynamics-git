@@ -181,6 +181,43 @@ const SupplyDashboard = () => {
     }
   };
 
+  const handleDeleteWarehouse = async (id) => {
+    try {
+      console.log('Deleting warehouse with ID:', id);
+      
+      // Show confirmation dialog before deleting
+      Modal.confirm({
+        title: 'Are you sure you want to delete this warehouse?',
+        content: 'This action cannot be undone.',
+        okText: 'Yes, Delete',
+        okType: 'danger',
+        cancelText: 'Cancel',
+        onOk: async () => {
+          const response = await fetch(`http://localhost:5000/api/delete-warehouse/${id}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          });
+          
+          console.log('Delete response status:', response.status);
+          const result = await response.json();
+          console.log('Delete response data:', result);
+          
+          if (response.ok) {
+            message.success('Warehouse deleted successfully');
+            fetchWarehouses();
+          } else {
+            message.error(result.message || 'Failed to delete warehouse');
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error deleting warehouse:', error);
+      message.error('Error deleting warehouse');
+    }
+  };
+
 
 
 
