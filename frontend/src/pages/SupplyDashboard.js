@@ -218,6 +218,31 @@ const SupplyDashboard = () => {
     }
   };
 
+  // Prepare data for charts
+  const prepareChartData = (warehouseData) => {
+    // Prepare storage condition distribution data
+    const storageConditionMap = {};
+    warehouseData.forEach(warehouse => {
+      const condition = warehouse.storage_Condition;
+      storageConditionMap[condition] = (storageConditionMap[condition] || 0) + 1;
+    });
+    
+    const storageConditionChartData = Object.keys(storageConditionMap).map(condition => ({
+      name: condition,
+      value: storageConditionMap[condition]
+    }));
+    
+    setStorageConditionData(storageConditionChartData);
+    
+    // Prepare warehouse utilization data
+    const utilizationChartData = warehouseData.map(warehouse => ({
+      name: warehouse.address.substring(0, 15) + (warehouse.address.length > 15 ? '...' : ''),
+      utilization: Math.round((warehouse.current_Stock / warehouse.capacity) * 100)
+    }));
+    
+    setUtilizationData(utilizationChartData);
+  };
+
 
 
 
