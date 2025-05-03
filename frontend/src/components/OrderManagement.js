@@ -215,5 +215,26 @@ const OrderManagement = () => {
  
    const validateForm = () => {
      const errors = {};
+
+      // Validate consumer
+    if (!formData.consumer_ID) {
+        errors.consumer_ID = 'Consumer is required';
+      }
+      
+      // Validate order date
+      if (!formData.order_date) {
+        errors.order_date = 'Order date is required';
+      } else {
+        const orderDate = new Date(formData.order_date);
+        const today = new Date();
+        if (orderDate > today) {
+          errors.order_date = 'Order date cannot be in the future';
+        }
+      }
+      
+      // Validate products
+      if (selectedProducts.length === 0) {
+        errors.products = 'At least one product is required';
+      }
      
      
