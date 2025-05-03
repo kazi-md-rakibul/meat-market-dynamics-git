@@ -191,4 +191,107 @@ const ProcessingUnitList = () => {
             ),
         },
     ];
+// Calculate statistics from the data
+const totalCapacity = units.reduce((sum, unit) => sum + (unit.processing_Capacity || 0), 0);
+const upcomingProcessing = units.filter(unit => {
+    const processDate = new Date(unit.processing_Date);
+    const today = new Date();
+    return processDate > today;
+}).length;
+
+return (
+    <Layout>
+        <div style={{ padding: '0 12px' }}>
+            <Card 
+                bordered={false}
+                style={{ 
+                    borderRadius: '8px',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.03)',
+                    marginBottom: '24px'
+                }}
+            >
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginBottom: '24px',
+                    flexWrap: 'wrap',
+                    gap: '16px'
+                }}>
+ <div>
+                            <Title level={4} style={{ margin: 0 }}>
+                                Processing Units
+                                <Badge 
+                                    count={units.length} 
+                                    style={{ 
+                                        backgroundColor: '#1890ff',
+                                        marginLeft: '8px'
+                                    }} 
+                                    overflowCount={999} 
+                                />
+                            </Title>
+                            <Text type="secondary">Manage meat processing facilities and their capacities</Text>
+                        </div>
+                        <Space wrap>
+                            <Button
+                                onClick={fetchUnits}
+                                icon={<ReloadOutlined spin={refreshing} />}
+                                disabled={refreshing}
+                            >
+                                Refresh
+                            </Button>
+                            <Link to="/processing-units/create">
+                                <Button type="primary" icon={<PlusOutlined />}>
+                                    New Unit
+                                </Button>
+                            </Link>
+                        </Space>
+                    </div>
+                    
+                    {/* Stats Cards */}
+                    <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
+                        <Col xs={24} sm={12} md={8}>
+                            <Card style={{ borderRadius: '6px' }}>
+                                <Statistic 
+                                    title="Total Units" 
+                                    value={units.length} 
+                                    prefix={<Badge status="processing" />} 
+                                />
+                            </Card>
+                        </Col>
+                        <Col xs={24} sm={12} md={8}>
+                            <Card style={{ borderRadius: '6px' }}>
+                                <Statistic 
+                                    title="Total Capacity" 
+                                    value={totalCapacity} 
+                                    suffix="kg" 
+                                    precision={0} 
+                                />
+                            </Card>
+                        </Col>
+                        <Col xs={24} sm={12} md={8}>
+                            <Card style={{ borderRadius: '6px' }}>
+                                <Statistic 
+                                    title="Upcoming Processing" 
+                                    value={upcomingProcessing} 
+                                    valueStyle={{ color: upcomingProcessing > 0 ? '#52c41a' : '#8c8c8c' }}
+                                />
+                            </Card>
+                        </Col>
+                    </Row>
+                    
+                    <div style={{ display: 'flex', marginBottom: '16px', gap: '12px', flexWrap: 'wrap' }}>
+                        <Search
+                            placeholder="Search by ID, name or capacity..."
+                            allowClear
+                            onChange={e => handleSearch(e.target.value)}
+                            onSearch={handleSearch}
+                            style={{ maxWidth: '400px', width: '100%' }}
+                        />
+                    </div>
+
+                 </Card>
+            </div>
+        </Layout>
+);
+
 };
