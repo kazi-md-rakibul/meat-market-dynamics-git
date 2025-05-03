@@ -229,6 +229,65 @@ const ProductDashboard = () => {
             ],
             onFilter: (value, record) => record.batch_Status?.toLowerCase() === value,
           }
-    ]
-    
+    ];
+
+// Define expanded columns (shown only on larger screens)
+const expandedColumns = [
+    {
+      title: 'Origin',
+      dataIndex: 'origin',
+      key: 'origin',
+      width: 120,
+    },
+    {
+      title: 'Cut',
+      dataIndex: 'cut_Type',
+      key: 'cut_Type',
+      width: 100,
+    },
+    {
+      title: 'Process Date',
+      dataIndex: 'processing_Date',
+      key: 'processing_Date',
+      width: 120,
+      render: (date) => moment(date).isValid() ? moment(date).format('MM/DD/YY') : 'N/A',
+    },
+    {
+      title: 'Expiry',
+      dataIndex: 'expiration_Date',
+      key: 'expiration_Date',
+      width: 120,
+      render: (date) => moment(date).isValid() ? moment(date).format('MM/DD/YY') : 'N/A',
+    },
+    {
+      title: 'Weight',
+      dataIndex: 'weight_Per_Unit',
+      key: 'weight_Per_Unit',
+      width: 100,
+      render: (weight) => `${weight} kg`,
+    },
+    {
+      title: 'Batch',
+      dataIndex: 'batch_ID',
+      key: 'batch_ID',
+      width: 80,
+    },
+    {
+      title: 'Facility',
+      dataIndex: 'processing_facility',
+      key: 'processing_facility',
+      width: 150,
+      ellipsis: true,
+    },
+    {
+      title: 'Warehouse',
+      dataIndex: 'warehouse_location',
+      key: 'warehouse_location',
+      width: 150,
+      ellipsis: true,
+    }
+  ];
+
+  
+
 };
