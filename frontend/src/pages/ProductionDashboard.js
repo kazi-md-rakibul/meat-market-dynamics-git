@@ -391,6 +391,89 @@ const ProductionDashboard = () => {
                         </Card>
                     </Col>
                 </Row>
+                <Card title="Add New Meat Batch" style={{ marginBottom: '24px' }}>
+                    <Form
+                        form={form}
+                        layout="vertical"
+                        onFinish={handleSubmit}
+                    >
+                        <Row gutter={16}>
+                            <Col span={8}>
+                                <Form.Item
+                                    name="unit_ID"
+                                    label="Processing Unit"
+                                    rules={[{ required: true, message: 'Please select processing unit' }]}
+                                >
+                                    <Select placeholder="Select Processing Unit">
+                                        {units.map((unit) => (
+                                            <Option key={unit.unit_ID} value={unit.unit_ID}>
+                                                {`${unit.unit_ID} - ${unit.facility_Name}`}
+                                            </Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item
+                                    name="warehouse_ID"
+                                    label="Warehouse"
+                                >
+                                    <Select placeholder="Select Warehouse">
+                                        {warehouses.map((warehouse) => (
+                                            <Option key={warehouse.warehouse_ID} value={warehouse.warehouse_ID}>
+                                                {`#${warehouse.warehouse_ID} - ${warehouse.address} (${warehouse.storage_Condition})`}
+                                            </Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item
+                                    name="total_Weight"
+                                    label="Total Weight (kg)"
+                                    rules={[{ required: true, message: 'Please input total weight' }]}
+                                >
+                                    <Input type="number" step="0.01" />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+
+                        <Row gutter={16}>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="dateRange"
+                                    label="Production & Expiration Dates"
+                                    rules={[{ required: true, message: 'Please select date range' }]}
+                                >
+                                    <RangePicker style={{ width: '100%' }} />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="batch_Status"
+                                    label="Batch Status"
+                                    rules={[{ required: true, message: 'Please select status' }]}
+                                >
+                                    <Select>
+                                        <Option value="transit">In Transit</Option>
+                                        <Option value="stored">In Storage</Option>
+                                        <Option value="sold">Sold</Option>
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                        </Row>
+
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit">
+                                Create Batch
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Card>
+
+                
+
+
                 </div>
                 </Layout>
     );
