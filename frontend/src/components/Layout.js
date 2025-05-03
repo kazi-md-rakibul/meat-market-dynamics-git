@@ -187,6 +187,17 @@ const Layout = ({ children }) => {
                 </a>
               ))}
             </nav>
+            <div style={styles.sidebarFooter}>
+              <div style={styles.sidebarFooterContent}>
+                <p style={styles.footerText}>v1.0.0</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
     
 
     
