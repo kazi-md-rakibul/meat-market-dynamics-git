@@ -141,6 +141,46 @@ const SupplyDashboard = () => {
     setIsEditModalVisible(true);
   };
 
+  const handleUpdateWarehouse = async (values) => {
+    try {
+      const warehouseId = editingWarehouse.warehouse_ID;
+      console.log('Updating warehouse:', { warehouseId, values });
+      
+      const url = `http://localhost:5000/api/update-warehouse/${warehouseId}`;
+      // Make sure the field names exactly match what the backend expects
+      // The backend controller expects lowercase field names
+      const requestBody = {
+        address: values.address,
+        current_stock: parseInt(values.current_stock),  // Convert to integer
+        capacity: parseInt(values.capacity),  // Convert to integer
+        storage_condition: values.storage_condition
+      };
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+      
+      const responseData = await response.json();
+      
+      if (response.ok) {
+        message.success('Warehouse updated successfully');
+        setIsEditModalVisible(false);
+        form.resetFields();
+        setEditingWarehouse(null);
+        fetchWarehouses();
+      } else {
+        message.error(responseData.message || 'Failed to update warehouse');
+      }
+    } catch (error) {
+      console.error('Error updating warehouse:', error);
+      message.error('Error updating warehouse');
+    }
+  };
+
 
 
 
