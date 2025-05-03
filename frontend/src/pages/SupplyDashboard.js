@@ -57,4 +57,90 @@ const SupplyDashboard = () => {
       setLoading(prev => ({ ...prev, warehouses: false }));
     }
   };
+  const handleSubmitWarehouse = async (values) => {
+    try {
+      // Debug form values
+      console.log('Form values received:', values);
+      
+      // Check if all required fields are present
+      if (!values.address || values.current_stock === undefined || values.capacity === undefined || !values.storage_condition) {
+        console.error('Missing required fields:', values);
+        message.error('Please fill in all required fields');
+        return;
+      }
+      
+      // Add a delay to ensure we can see the console logs
+      console.log('Starting warehouse creation process...');
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const url = 'http://localhost:5000/api/create-warehouse';
+      console.log('Making request to:', url);
+      
+      // Prepare request body with exact field names expected by backend
+      // Looking at the backend controller, it expects lowercase field names
+      const requestBody = {
+        address: values.address,
+        current_stock: parseInt(values.current_stock),
+        capacity: parseInt(values.capacity),
+        storage_condition: values.storage_condition
+      };
+      console.log('Request body prepared:', requestBody);
+
+      // Make the API request
+      console.log('Sending fetch request with body:', JSON.stringify(requestBody));
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        });
+        
+        console.log('Response received. Status:', response.status);
+        console.log('Response OK?', response.ok);
+
+        // Parse response data
+        let responseData;
+        try {
+          responseData = await response.json();
+          console.log('Response data parsed:', responseData);
+        } catch (parseError) {
+          console.error('Error parsing response:', parseError);
+          responseData = { message: 'Could not parse server response' };
+        }
+      
+        if (response.ok) {
+          console.log('Request successful, closing modal and refreshing data');
+          message.success('Warehouse created successfully');
+          setIsModalVisible(false);
+          form.resetFields();
+          fetchWarehouses();
+        } else {
+          console.error('Request failed with status:', response.status, responseData);
+          message.error(responseData.message || 'Failed to create warehouse');
+        }
+      } catch (networkError) {
+        console.error('Network error during fetch:', networkError);
+        message.error('Network error: ' + networkError.message);
+      }
+    } catch (error) {
+      console.error('Exception in handleSubmitWarehouse:', error);
+      message.error('Error creating warehouse: ' + (error.message || 'Unknown error'));
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
+
