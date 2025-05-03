@@ -236,5 +236,100 @@ const OrderManagement = () => {
       if (selectedProducts.length === 0) {
         errors.products = 'At least one product is required';
       }
+
+       // Set form errors and return validation result
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
+    setLoading(true);
+    try {
+      const orderData = {
+        ...formData,
+        total_price: calculateTotal(),
+        quantity: selectedProducts.reduce((sum, p) => sum + p.quantity, 0),
+        products: selectedProducts.map(p => ({
+          product_ID: p.product_ID,
+          quantity: p.quantity
+        }))
+      };
+
+      console.log('Submitting order data:', orderData);
+
+      let response;
+      if (selectedOrder) {
+        response = await axios.put(
+          `http://localhost:5000/api/orders/${selectedOrder.order_ID}`,
+          orderData
+        );
+        console.log('Update response:', response.data);
+      } else {
+        response = await axios.post('http://localhost:5000/api/orders', orderData);
+        console.log('Create response:', response.data);
+      }
+      
+      await fetchOrders();
+      handleClose();
+      setSnackbar({
+        open: true,
+        message: `Order ${selectedOrder ? 'updated' : 'created'} successfully!`,
+        severity: 'success'
+      });
+    } catch (error) {
+      console.error('Error submitting order:', error);
+      let errorMessage = 'Failed to save order. Please try again.';
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message;
+      }
+      setSnackbar({
+        open: true,
+        message: errorMessage,
+        severity: 'error'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteConfirm = (id) => {
+    setConfirmDelete({
+      open: true,
+      orderId: id
+    });
+  };
+
+  const handleDeleteCancel = () => {
+    setConfirmDelete({
+      open: false,
+      orderId: null
+    });
+  };
+
+  const handleDelete = async () => {
+    if (!confirmDelete.orderId) return;
+    
+    setTableLoading(true);
+    try {
+      await axios.delete(`http://localhost:5000/api/orders/${confirmDelete.orderId}`);
+      await fetchOrders();
+      setSnackbar({
+        open: true,
+        message: 'Order deleted successfully!',
+        severity: 'success'
+      });
+    } catch (error) {
+      console.error('Error deleting order:', error);
+      setSnackbar({
+        open: true,
+        message: 'Failed to delete order. Please try again.',
+        severity: 'error'
+      });
+    } finally {
+      setTableLoading(false);
+      handleDeleteCancel();
+    }
+  };
      
      
