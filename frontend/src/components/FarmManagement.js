@@ -57,3 +57,21 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
       padding: '12px 16px',
     },
   }));
+
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.mode === 'dark' 
+        ? theme.palette.action.hover 
+        : 'rgba(0, 0, 0, 0.02)',
+    },
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+    transition: 'background-color 0.2s ease',
+    '&:hover': {
+      backgroundColor: theme.palette.mode === 'dark' 
+        ? theme.palette.action.selected 
+        : 'rgba(79, 70, 229, 0.08)',
+      cursor: 'pointer',
+    },
+  }));
