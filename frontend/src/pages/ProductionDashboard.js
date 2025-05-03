@@ -51,5 +51,58 @@ const ProductionDashboard = () => {
             message.error('Failed to fetch warehouses');
         }
     };
+    const fetchBatches = async () => {
+        try {
+            console.log('Fetching batches from API...');
+            setLoading(true);
+            
+            const response = await axios.get('http://localhost:5000/api/production/batches');
+            console.log('Received batches response:', response);
+            
+            const data = Array.isArray(response.data) ? response.data : [];
+            console.log(`Fetched ${data.length} batches`);
+            
+            setBatches(data);
+
+            const totalWeight = data.reduce((sum, batch) => sum + (parseFloat(batch.total_Weight) || 0), 0);
+            const statusCounts = data.reduce((acc, batch) => {
+                if (batch.batch_Status) {
+                    acc[batch.batch_Status] = (acc[batch.batch_Status] || 0) + 1;
+                }
+                return acc;
+            }, {});
+
+            console.log('Calculated batch statistics:', { 
+                totalBatches: data.length,
+                totalWeight,
+                statusCounts
+            });
+            
+            setStats({
+                totalBatches: data.length,
+                totalWeight,
+                inTransit: statusCounts.transit || 0,
+                inStorage: statusCounts.stored || 0,
+                sold: statusCounts.sold || 0
+            });
+        } catch (error) {
+            console.error('Error fetching batches:', error);
+            if (error.response) {
+                console.error('Response data:', error.response.data);
+                console.error('Response status:', error.response.status);
+                message.error(`Failed to fetch batches: ${error.response.data.message || error.response.statusText}`);
+            } else if (error.request) {
+                console.error('No response received:', error.request);
+                message.error('Failed to fetch batches: No response from server');
+            } else {
+                message.error(`Failed to fetch batches: ${error.message}`);
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    
+
 
 };
