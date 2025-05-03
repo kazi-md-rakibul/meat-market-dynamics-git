@@ -96,7 +96,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   
     useEffect(() => {
       fetchFarms();
-    }, []);}
+    }, []);
   
     const fetchFarms = async () => {
       setLoading(true);
@@ -604,6 +604,102 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
                 }}
               />
                </Grid>
+               <Grid item xs={12} sm={6}>
+              <TextField
+                name="available_Stock"
+                label="Available Stock"
+                type="number"
+                value={formData.available_Stock}
+                onChange={handleChange}
+                fullWidth
+                required
+                variant="outlined"
+                InputProps={{
+                  sx: { borderRadius: '10px' }
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                name="number_of_Livestock"
+                label="Total Livestock"
+                type="number"
+                value={formData.number_of_Livestock}
+                onChange={handleChange}
+                fullWidth
+                required
+                variant="outlined"
+                InputProps={{
+                  sx: { borderRadius: '10px' }
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                name="address"
+                label="Address"
+                value={formData.address}
+                onChange={handleChange}
+                fullWidth
+                required
+                multiline
+                rows={2}
+                variant="outlined"
+                InputProps={{
+                  sx: { borderRadius: '10px' }
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                name="contact_info"
+                label="Contact Information"
+                value={formData.contact_info}
+                onChange={handleChange}
+                fullWidth
+                required
+                variant="outlined"
+                InputProps={{
+                  sx: { borderRadius: '10px' }
+                }}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        
+        <DialogActions sx={{ px: 3, py: 2 }}>
+          <Button 
+            onClick={handleClose} 
+            disabled={loading}
+            variant="outlined"
+            sx={{ 
+              borderRadius: '10px',
+              textTransform: 'none' 
+            }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleSubmit} 
+            variant="contained" 
+            color="primary"
+            disabled={loading}
+            sx={{ 
+              borderRadius: '10px',
+              textTransform: 'none',
+              px: 3
+            }}
+          >
+            {loading ? 'Saving...' : selectedFarm ? 'Update Farm' : 'Create Farm'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Paper>
+  );
+};
+
+export default FarmManagement;
+
 
 
   
