@@ -287,7 +287,81 @@ const expandedColumns = [
       ellipsis: true,
     }
   ];
+// Action column
+const actionColumn = {
+    title: 'Actions',
+    key: 'actions',
+    width: screens.xs ? 120 : 150,
+    fixed: screens.md ? 'right' : false,
+    render: (_, record) => (
+      <Space size="small">
+        <Button 
+          type="primary" 
+          size="small" 
+          onClick={() => handleEdit(record)}
+          style={{
+            backgroundColor: '#4f46e5',
+            borderColor: '#4f46e5',
+            borderRadius: '4px',
+            fontWeight: 500
+          }}
+          icon={<span role="img" aria-label="edit">✏️</span>}
+        >
+          Edit
+        </Button>
+        <Popconfirm
+          title="Are you sure to delete this product?"
+          onConfirm={() => handleDelete(record.product_ID)}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button 
+            type="primary" 
+            danger 
+            size="small"
+            style={{
+              borderRadius: '4px',
+              fontWeight: 500
+            }}
+            icon={<span role="img" aria-label="delete">🗑️</span>}
+          >
+            Delete
+          </Button>
+        </Popconfirm>
+      </Space>
+    ),
+  };
+  // Combine columns based on screen size
+  const columns = screens.md 
+    ? [...baseColumns, ...expandedColumns, actionColumn] 
+    : [...baseColumns, actionColumn];
 
+  const fetchBatches = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get('http://localhost:5000/api/production/batches');
+      const batchIdsOnly = response.data.map(batch => batch.batch_ID);
+      setBatchesId(batchIdsOnly);
+    } catch (error) {
+      console.error('Error fetching batches:', error);
+      message.error('Failed to fetch batches');
+    } finally {
+      setLoading(false);
+    }
+  };
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('http://localhost:5000/api/products');
+      setProducts(response.data);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      message.error('Failed to fetch products');
+    } finally {
+      setLoading(false);
+    }
+  };
   
+
 
 };
