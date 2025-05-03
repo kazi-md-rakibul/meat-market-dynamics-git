@@ -250,6 +250,104 @@ const ProductionDashboard = () => {
         };
         fetchData();
     }, []);
+    const columns = [
+        {
+            title: 'Batch ID',
+            dataIndex: 'batch_ID',
+            key: 'batch_ID',
+            sorter: (a, b) => a.batch_ID - b.batch_ID,
+        },
+        {
+            title: 'Production Date',
+            dataIndex: 'production_Date',
+            key: 'production_Date',
+            render: (date) => moment(date).format('YYYY-MM-DD'),
+            sorter: (a, b) => new Date(a.production_Date) - new Date(b.production_Date),
+        },
+        {
+            title: 'Expiration Date',
+            dataIndex: 'expiration_Date',
+            key: 'expiration_Date',
+            render: (date) => moment(date).format('YYYY-MM-DD'),
+            sorter: (a, b) => new Date(a.expiration_Date) - new Date(b.expiration_Date),
+        },
+        {
+            title: 'Total Weight (kg)',
+            dataIndex: 'total_Weight',
+            key: 'total_Weight',
+            render: (weight) => Number(weight).toFixed(2),
+            sorter: (a, b) => a.total_Weight - b.total_Weight,
+        },
+        {
+            title: 'Status',
+            dataIndex: 'batch_Status',
+            key: 'batch_Status',
+            render: (status) => (
+                <span style={{
+                    color: status === 'stored' ? 'green' :
+                        status === 'transit' ? 'orange' :
+                            status === 'sold' ? 'blue' : 'black',
+                    fontWeight: '500'
+                }}>
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                </span>
+            ),
+            filters: [
+                { text: 'In Transit', value: 'transit' },
+                { text: 'In Storage', value: 'stored' },
+                { text: 'Sold', value: 'sold' },
+            ],
+            onFilter: (value, record) => record.batch_Status === value,
+        },
+        {
+            title: 'Processing Facility',
+            dataIndex: 'processing_Facility',
+            key: 'processing_Facility',
+            render: (facility) => facility || 'N/A',
+        },
+        {
+            title: 'Warehouse',
+            dataIndex: 'warehouse_Address',
+            key: 'warehouse_Address',
+            render: (address) => address || 'N/A',
+        },
+        {
+            title: 'Storage Condition',
+            dataIndex: 'warehouse_Storage_Condition',
+            key: 'warehouse_Storage_Condition',
+            render: (condition) => condition || 'N/A',
+        },
+        {
+            title: 'Meat Types',
+            dataIndex: 'meat_Types',
+            key: 'meat_Types',
+            render: (types) => (
+                types && types.length > 0 ?
+                    types.join(', ') :
+                    'N/A'
+            ),
+        },
+        {
+            title: 'Cut Types',
+            dataIndex: 'cut_Types',
+            key: 'cut_Types',
+            render: (cuts) => (
+                cuts && cuts.length > 0 ?
+                    cuts.join(', ') :
+                    'N/A'
+            ),
+        },
+        {
+            title: 'Actions',
+            key: 'actions',
+            render: (_, record) => (
+                <Space size="middle">
+                    <Button type="link" onClick={() => handleEdit(record)}>Edit</Button>
+                    <Button type="link" danger onClick={() => handleDelete(record.batch_ID)}>Delete</Button>
+                </Space>
+            ),
+        },
+    ];
 
 
 };
