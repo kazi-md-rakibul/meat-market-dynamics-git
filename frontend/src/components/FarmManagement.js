@@ -140,6 +140,70 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
       }
       setOpen(true);
     };
+    const handleClose = () => {
+      setOpen(false);
+      setSelectedFarm(null);
+    };
+  
+    const handleChange = (e) => {
+      const value = e.target.type === 'number' ? Number(e.target.value) : e.target.value;
+      setFormData({ ...formData, [e.target.name]: value });
+    };
+  
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      try {
+        if (selectedFarm) {
+          await axios.put(
+            `http://localhost:5000/api/farms/${selectedFarm.farm_ID}`,
+            formData
+          );
+        } else {
+          await axios.post('http://localhost:5000/api/farms', formData);
+        }
+        await fetchFarms();
+        handleClose();
+        setSnackbar({
+          open: true,
+          message: `Farm ${selectedFarm ? 'updated' : 'created'} successfully!`,
+          severity: 'success'
+        });
+      } catch (error) {
+        console.error('Error saving farm:', error);
+        setSnackbar({
+          open: true,
+          message: 'Failed to save farm. Please try again.',
+          severity: 'error'
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    const handleDelete = async (id) => {
+      if (window.confirm('Are you sure you want to delete this farm?')) {
+        try {
+          setLoading(true);
+          await axios.delete(`http://localhost:5000/api/farms/${id}`);
+          await fetchFarms();
+          setSnackbar({
+            open: true,
+            message: 'Farm deleted successfully!',
+            severity: 'success'
+          });
+        } catch (error) {
+          console.error('Error deleting farm:', error);
+          setSnackbar({
+            open: true,
+            message: 'Failed to delete farm. Please try again.',
+            severity: 'error'
+          });
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
   
 
   
