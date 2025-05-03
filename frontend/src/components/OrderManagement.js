@@ -349,4 +349,8 @@ const OrderManagement = () => {
     return sortableOrders;
   }, [orders, sortConfig]);
 
+  // Enhanced filter function for search with status filter
+  const filteredOrders = React.useMemo(() => {
+    let filtered = sortedOrders;
+
        
