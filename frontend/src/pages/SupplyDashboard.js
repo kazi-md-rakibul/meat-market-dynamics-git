@@ -130,6 +130,16 @@ const SupplyDashboard = () => {
     }
   };
 
+  const handleEditWarehouse = (warehouse) => {
+    setEditingWarehouse(warehouse);
+    form.setFieldsValue({
+      address: warehouse.address,
+      current_stock: warehouse.current_Stock,
+      capacity: warehouse.capacity,
+      storage_condition: warehouse.storage_Condition
+    });
+    setIsEditModalVisible(true);
+  };
 
 
 
