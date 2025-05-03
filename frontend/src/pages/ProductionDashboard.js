@@ -102,7 +102,82 @@ const ProductionDashboard = () => {
         }
     };
 
-    
+    const handleSubmit = async (values) => {
+        try {
+            console.log('Submitting batch with values:', values);
+            
+            // Validate required fields on the frontend
+            if (!values.unit_ID) {
+                message.error('Processing unit is required');
+                return;
+            }
+            if (!values.total_Weight) {
+                message.error('Total weight is required');
+                return;
+            }
+            if (!values.batch_Status) {
+                message.error('Batch status is required');
+                return;
+            }
+            if (!values.dateRange || !Array.isArray(values.dateRange) || values.dateRange.length !== 2) {
+                message.error('Valid date range is required');
+                return;
+            }
+            
+            const requestData = {
+                unit_ID: values.unit_ID,
+                warehouse_ID: values.warehouse_ID,
+                total_Weight: values.total_Weight,
+                batch_Status: values.batch_Status,
+                dateRange: [
+                    values.dateRange[0].format('YYYY-MM-DD'),
+                    values.dateRange[1].format('YYYY-MM-DD')
+                ]
+            };
+            
+            console.log('Sending request with data:', requestData);
+            
+            const response = await fetch('http://localhost:5000/api/create-production/batches', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData),
+            });
+
+            const responseData = await response.json();
+            
+            if (response.ok) {
+                console.log('Batch created successfully:', responseData);
+                message.success('Batch created successfully');
+                form.resetFields();
+                // Add a slight delay before fetching batches to ensure the database has updated
+                setTimeout(() => {
+                    fetchBatches();
+                }, 500);
+            } else {
+                console.error('Server returned error:', responseData);
+                message.error(responseData.message || 'Failed to create batch');
+            }
+        } catch (error) {
+            console.error('Error creating batch:', error);
+            message.error('Error creating batch: ' + (error.message || 'Unknown error'));
+        }
+    };
+    const handleEdit = (batch) => {
+        setEditingBatch(batch);
+        form.setFieldsValue({
+            unit_ID: batch.unit_ID,
+            warehouse_ID: batch.warehouse_ID,
+            total_Weight: batch.total_Weight,
+            batch_Status: batch.batch_Status,
+            dateRange: [
+                moment(batch.production_Date),
+                moment(batch.expiration_Date)
+            ]
+        });
+        setIsModalVisible(true);
+    };
 
 
 };
