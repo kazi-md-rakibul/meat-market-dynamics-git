@@ -62,3 +62,39 @@ exports.getOrderById = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+// Create new order
+exports.createOrder = async (req, res) => {
+    const { order_date, total_price, quantity, consumer_ID, products } = req.body;
+
+    try {
+        await db.query('START TRANSACTION');
+
+        // Create order
+        const [orderResult] = await db.query(
+            'INSERT INTO `order` (order_date, total_price, quantity, consumer_ID) VALUES (?, ?, ?, ?)',
+            [order_date, total_price, quantity, consumer_ID]
+        );
+
+        const order_ID = orderResult.insertId;
+
+        // Add order products
+        if (products && products.length > 0) {
+            const productValues = products.map(p => [order_ID, p.product_ID, p.quantity]);
+            await db.query(
+                'INSERT INTO orderproduct (order_ID, product_ID, quantity) VALUES ?',
+                [productValues]
+            );
+        }
+
+        await db.query('COMMIT');
+
+        res.status(201).json({ 
+            order_ID: order_ID,
+            message: 'Order created successfully'
+        });
+    } catch (err) {
+        await db.query('ROLLBACK');
+        res.status(400).json({ message: err.message });
+    }
+};
