@@ -35,6 +35,7 @@ exports.getProcessingUnits = async (req, res) => {
         });
     }
 };
+
 // DELETE: Remove a processing unit by ID
 exports.deleteProcessingUnit = async (req, res) => {
     const { id } = req.body;
@@ -101,5 +102,23 @@ exports.updateProcessingUnit = async (req, res) => {
         });
     }
 };
+// READ: Fetch a single processing unit by its ID
+exports.getProcessingUnitById = async (req, res) => {
+    const { id } = req.params;
 
+    try {
+        const [unit] = await db.query('SELECT * FROM ProcessingUnit WHERE unit_ID = ?', [id]);
 
+        if (unit.length === 0) {
+            return res.status(404).json({ message: 'Processing unit not found' });
+        }
+
+        res.json(unit[0]);
+    } catch (err) {
+        console.error('Error fetching processing unit:', err);
+        res.status(500).json({
+            message: 'Failed to fetch processing unit',
+            error: err.message
+        });
+    }
+};
