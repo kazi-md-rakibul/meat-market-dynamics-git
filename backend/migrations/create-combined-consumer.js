@@ -50,6 +50,26 @@ console.log('   ✅ Created new combined table structure');
         CURDATE() as record_date
       FROM consumer
     `);
+
+    console.log('   ✅ Copied consumer data to combined table');
+    
+    // 3. Create a view for backward compatibility
+    console.log('\n3. Creating views for backward compatibility...');
+    
+    // Consumer view
+    await db.query(`DROP VIEW IF EXISTS consumer_view`);
+    await db.query(`
+      CREATE VIEW consumer_view AS
+      SELECT 
+        consumer_ID,
+        preferred_Meat_Type,
+        preferred_Cut,
+        average_Order_Size,
+        average_Spending
+      FROM consumer_combined
+    `);
+
+    
       
   } catch (error) {
     console.error('\n❌ MIGRATION FAILED:', error);
