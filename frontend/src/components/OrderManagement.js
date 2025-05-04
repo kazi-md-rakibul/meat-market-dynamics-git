@@ -760,6 +760,126 @@ const OrderManagement = () => {
               </Typography>
             </Box>
 
+            <Grid container spacing={2}>
+              {products.map((product) => {
+                const selectedProduct = selectedProducts.find(
+                  p => p.product_ID === product.product_ID
+                );
+                const quantity = selectedProduct ? selectedProduct.quantity : 0;
+
+                return (
+                  <Grid item xs={12} sm={6} md={4} key={product.product_ID}>
+                    <Card variant={quantity > 0 ? "outlined" : "elevation"} 
+                          sx={{ 
+                            borderColor: quantity > 0 ? 'primary.main' : 'inherit',
+                            transition: 'all 0.2s ease',
+                            bgcolor: quantity > 0 ? 'primary.lightest' : 'background.paper',
+                          }}>
+                      <CardContent>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
+                          {product.product_name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          ${product.price_Per_Unit} per unit
+                        </Typography>
+                        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <IconButton
+                            color="primary"
+                            onClick={() => handleProductQuantityChange(product.product_ID, -1)}
+                            disabled={quantity === 0}
+                            size="small"
+                          >
+                            <RemoveCircleIcon />
+                          </IconButton>
+                          <Typography sx={{ 
+                            fontWeight: 'medium', 
+                            minWidth: '40px', 
+                            textAlign: 'center'
+                          }}>
+                            {quantity}
+                          </Typography>
+                          <IconButton
+                            color="primary"
+                            onClick={() => handleProductQuantityChange(product.product_ID, 1)}
+                            size="small"
+                          >
+                            <AddCircleIcon />
+                          </IconButton>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                );
+              })}
+            </Grid>
+
+            <Typography variant="h6" sx={{ mt: 3, p: 2, bgcolor: 'primary.lightest', borderRadius: 1 }}>
+              Total: ${calculateTotal().toFixed(2)}
+            </Typography>
+          </Box>
+        </DialogContent>
+        <Divider />
+        <DialogActions sx={{ px: 3, py: 2 }}>
+          <Button 
+            onClick={handleClose} 
+            disabled={loading}
+            variant="outlined"
+            sx={{ mr: 1 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
+            color="primary"
+            disabled={loading || !formData.consumer_ID || selectedProducts.length === 0}
+            startIcon={loading && <CircularProgress size={20} color="inherit" />}
+            sx={{ px: 3 }}
+          >
+            {loading ? 'Saving...' : selectedOrder ? 'Update Order' : 'Create Order'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert 
+          onClose={() => setSnackbar({ ...snackbar, open: false })} 
+          severity={snackbar.severity}
+          variant="filled"
+          elevation={6}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+      
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={confirmDelete.open}
+        onClose={handleDeleteCancel}
+      >
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this order? This action cannot be undone.</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel}>Cancel</Button>
+          <Button onClick={handleDelete} color="error" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
+};
+
+export default OrderManagement;
+
       
   
       
