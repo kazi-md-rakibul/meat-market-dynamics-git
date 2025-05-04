@@ -20,6 +20,36 @@ await db.query(`
     record_date DATE NOT NULL
   )
 `);
+
+console.log('   ✅ Created new combined table structure');
+    
+    // 2. Copy data from existing consumer table
+    console.log('\n2. Copying data from existing consumer table...');
+    
+    await db.query(`
+      INSERT INTO consumer_combined (
+        consumer_ID, 
+        preferred_Meat_Type, 
+        preferred_Cut, 
+        average_Order_Size, 
+        average_Spending,
+        region,
+        season,
+        consumption_amount,
+        record_date
+      )
+      SELECT 
+        consumer_ID, 
+        preferred_Meat_Type, 
+        preferred_Cut, 
+        average_Order_Size, 
+        average_Spending,
+        'National' as region,
+        'All Year' as season,
+        average_Order_Size as consumption_amount,
+        CURDATE() as record_date
+      FROM consumer
+    `);
       
   } catch (error) {
     console.error('\n❌ MIGRATION FAILED:', error);
