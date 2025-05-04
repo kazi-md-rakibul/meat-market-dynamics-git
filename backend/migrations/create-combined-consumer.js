@@ -69,6 +69,22 @@ console.log('   ✅ Created new combined table structure');
       FROM consumer_combined
     `);
 
+    console.log('   ✅ Created consumer_view');
+    
+    // Consumption pattern view
+    await db.query(`DROP VIEW IF EXISTS consumption_patterns_view`);
+    await db.query(`
+      CREATE VIEW consumption_patterns_view AS
+      SELECT 
+        consumer_ID as pattern_ID,
+        preferred_Meat_Type as meat_Type,
+        region,
+        season,
+        consumption_amount,
+        record_date
+      FROM consumer_combined
+    `);
+
     
       
   } catch (error) {
