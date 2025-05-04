@@ -43,6 +43,10 @@ async function finalizeConsumerMigration() {
     console.log('   - consumption_patterns_view: For accessing consumption pattern data');
     console.log('3. The original consumer table is backed up as consumer_old');
     console.log('\nNext steps:');
+    console.log('1. Update your application code to use the new consumer table structure');
+    console.log('2. Update your schema.sql file to reflect these changes');
+    console.log('3. Test thoroughly to ensure everything works correctly');
+    console.log('4. Once confirmed working, you can drop the consumer_old table');
 
 
   }
@@ -54,3 +58,5 @@ async function finalizeConsumerMigration() {
   }
 
 }
+
+finalizeConsumerMigration();
