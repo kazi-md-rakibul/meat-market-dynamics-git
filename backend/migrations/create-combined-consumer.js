@@ -94,7 +94,22 @@ console.log('   ✅ Created new combined table structure');
     const [orderCount] = await db.query(`
       SELECT COUNT(*) as count FROM \`order\` WHERE consumer_ID IS NOT NULL
     `);
-    
+
+    if (orderCount[0].count > 0) {
+        console.log(`   ⚠️ Found ${orderCount[0].count} orders referencing consumers`);
+        console.log('   ⚠️ You will need to manually update the foreign key references');
+        console.log('   ⚠️ This script will not modify the order table');
+      } else {
+        console.log('   ✅ No orders found referencing consumers');
+      }
+      
+      console.log('\n=== COMBINED TABLE CREATED SUCCESSFULLY ===');
+      console.log('\nNext steps:');
+      console.log('1. Test the new consumer_combined table');
+      console.log('2. Update your application code to use the new table');
+      console.log('3. When ready, rename tables with:');
+      console.log('   - RENAME TABLE consumer TO consumer_old, consumer_combined TO consumer');
+      console.log('4. Update your schema.sql file to reflect these changes');
       
   } catch (error) {
     console.error('\n❌ MIGRATION FAILED:', error);
@@ -103,3 +118,5 @@ console.log('   ✅ Created new combined table structure');
     process.exit();
   }
 }
+
+createCombinedConsumerTable();
