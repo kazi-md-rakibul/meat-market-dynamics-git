@@ -20,3 +20,15 @@ exports.createProcessingUnit = async (req, res) => {
         });
     }
 };
+exports.getProcessingUnits = async (req, res) => {
+    try {
+        const [units] = await db.query('SELECT * FROM ProcessingUnit');
+        res.json(units);
+    } catch (err) {
+        console.error('Error fetching processing units:', err);
+        res.status(500).json({
+            message: 'Failed to fetch processing units',
+            error: err.message
+        });
+    }
+};
