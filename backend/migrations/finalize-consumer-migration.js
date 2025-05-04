@@ -35,7 +35,11 @@ async function finalizeConsumerMigration() {
      await db.query('DROP TABLE IF EXISTS consumptionpattern');
      console.log('   ✅ Dropped consumptionpattern table');
 
-     
+     console.log('\n=== MIGRATION FINALIZED SUCCESSFULLY ===');
+    console.log('\nYour database now has:');
+    console.log('1. A combined consumer table with consumption pattern data');
+    console.log('2. Views for backward compatibility:');
+    
 
   }
   catch (error) {
