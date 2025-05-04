@@ -1,6 +1,9 @@
 // Import the database configuration
 const db = require('../config/db');
-// CREATE: Add a new processing unit to the database
+/**
+ * CREATE: Adds a new processing unit to the database.
+ * Expects: facility_Name, processing_Capacity, and processing_Date in the request body.
+ */
 exports.createProcessingUnit = async (req, res) => {
     const { facility_Name, processing_Capacity, processing_Date } = req.body;
     try {
@@ -21,8 +24,9 @@ exports.createProcessingUnit = async (req, res) => {
         });
     }
 };
-
-// READ: Fetch all processing units from the database
+/**
+ * READ: Fetches all processing units from the database.
+ */
 exports.getProcessingUnits = async (req, res) => {
     try {
         const [units] = await db.query('SELECT * FROM ProcessingUnit');
@@ -35,8 +39,10 @@ exports.getProcessingUnits = async (req, res) => {
         });
     }
 };
-
-// DELETE: Remove a processing unit by ID
+/**
+ * DELETE: Removes a processing unit by its ID.
+ * Expects: ID in the request body.
+ */
 exports.deleteProcessingUnit = async (req, res) => {
     const { id } = req.body;
 
@@ -102,7 +108,10 @@ exports.updateProcessingUnit = async (req, res) => {
         });
     }
 };
-// READ: Fetch a single processing unit by its ID
+/**
+ * READ: Fetches a single processing unit by its ID.
+ * Expects: ID in the URL params.
+ */
 exports.getProcessingUnitById = async (req, res) => {
     const { id } = req.params;
 
