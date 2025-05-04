@@ -6,3 +6,13 @@ router.get('/', orderController.getAllOrders);
 
 // Get order by ID
 router.get('/:id', orderController.getOrderById);
+
+// Create new order
+router.post('/', orderController.createOrder);
+
+// Update order
+router.put('/:order_ID', orderController.updateOrder);
+
+// Delete order
+router.delete('/:order_ID', orderController.deleteOrder);
+
