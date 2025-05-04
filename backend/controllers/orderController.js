@@ -98,3 +98,48 @@ exports.createOrder = async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 };
+
+// updated order
+exports.updateOrder = async (req, res) => {
+    const { order_ID } = req.params;
+    const { order_date, total_price, quantity, consumer_ID, delivery_ID, products } = req.body;
+
+    try {
+        await db.query('START TRANSACTION');
+
+        // Check if order exists
+        const [existingOrder] = await db.query('SELECT * FROM `order` WHERE order_ID = ?', [order_ID]);
+        if (existingOrder.length === 0) {
+            await db.query('ROLLBACK');
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        // Update order
+        await db.query(
+            'UPDATE `order` SET order_date = ?, total_price = ?, quantity = ?, consumer_ID = ?, delivery_ID = ? WHERE order_ID = ?',
+            [order_date, total_price, quantity, consumer_ID, delivery_ID, order_ID]
+        );
+
+        // Update order products if provided
+        if (products) {
+            // Remove existing products
+            await db.query('DELETE FROM orderproduct WHERE order_ID = ?', [order_ID]);
+
+            // Add new products
+            if (products.length > 0) {
+                const productValues = products.map(p => [order_ID, p.product_ID, p.quantity]);
+                await db.query(
+                    'INSERT INTO orderproduct (order_ID, product_ID, quantity) VALUES ?',
+                    [productValues]
+                );
+            }
+        }
+
+        await db.query('COMMIT');
+
+        res.json({ message: 'Order updated successfully' });
+    } catch (err) {
+        await db.query('ROLLBACK');
+        res.status(400).json({ message: err.message });
+    }
+};
