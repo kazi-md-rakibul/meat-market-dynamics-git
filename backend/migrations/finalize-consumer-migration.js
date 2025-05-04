@@ -29,7 +29,13 @@ async function finalizeConsumerMigration() {
       console.log('   ✅ No orders found in the database');
     }
 
+     // 3. Drop the old consumption pattern table
+     console.log('\n3. Dropping the old consumption pattern table...');
     
+     await db.query('DROP TABLE IF EXISTS consumptionpattern');
+     console.log('   ✅ Dropped consumptionpattern table');
+
+     
 
   }
   catch (error) {
