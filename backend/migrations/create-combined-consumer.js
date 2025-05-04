@@ -85,6 +85,15 @@ console.log('   ✅ Created new combined table structure');
       FROM consumer_combined
     `);
 
+    console.log('   ✅ Created consumption_patterns_view');
+    
+    // 4. Update foreign key references
+    console.log('\n4. Checking foreign key references...');
+    
+    // Check if there are any orders referencing consumers
+    const [orderCount] = await db.query(`
+      SELECT COUNT(*) as count FROM \`order\` WHERE consumer_ID IS NOT NULL
+    `);
     
       
   } catch (error) {
