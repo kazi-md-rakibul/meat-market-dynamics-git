@@ -16,3 +16,7 @@ router.put('/:order_ID', orderController.updateOrder);
 // Delete order
 router.delete('/:order_ID', orderController.deleteOrder);
 
+// Get orders by delivery
+router.get('/delivery/:delivery_ID', orderController.getOrdersByDelivery);
+
+module.exports = router;
