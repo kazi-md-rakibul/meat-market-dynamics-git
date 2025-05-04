@@ -18,6 +18,17 @@ async function finalizeConsumerMigration() {
     // 2. Update foreign key constraints
     console.log('\n2. Checking and updating foreign key constraints...');
 
+    // Check if there are orders that need to be updated
+    const [orderCount] = await db.query(`SELECT COUNT(*) as count FROM \`order\``);
+    
+    if (orderCount[0].count > 0) {
+      console.log(`   Found ${orderCount[0].count} orders in the database`);
+      console.log('   Foreign key constraints should be maintained automatically');
+      console.log('   since we kept the same primary key values');
+    } else {
+      console.log('   ✅ No orders found in the database');
+    }
+
     
 
   }
