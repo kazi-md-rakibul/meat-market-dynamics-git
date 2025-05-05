@@ -10,7 +10,7 @@ const routes = require('./routes/routes');
 const farmRoutes = require('./routes/farmRoutes');
 const consumerRoutes = require('./routes/consumerRoutes');
 
-// Middleware
+// Middleware 
 app.use(cors());
 app.use(express.json());
 app.use('/api', routes);
