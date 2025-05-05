@@ -291,3 +291,106 @@ const MarketAnalysisDashboard = () => {
             </Col>
           </Row>
         </Card>
+        
+        {/* Summary Statistics */}
+        <Row gutter={16} style={{ marginBottom: 24 }}>
+          <Col xs={24} sm={12} md={8} lg={6}>
+            <Card>
+              <Statistic
+                title="Average Price"
+                value={
+                  priceTrends.length > 0
+                    ? priceTrends.reduce((acc, curr) => acc + Number(curr.price), 0) / priceTrends.length
+                    : 0
+                }
+                precision={2}
+                prefix="$"
+              />
+
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} md={8} lg={6}>
+            <Card>
+              <Statistic
+                title="Highest Price"
+                value={priceTrends.length > 0 ?
+                  Math.max(...priceTrends.map(item => Number(item.price))) : 0}
+                precision={2}
+                prefix="$"
+              />
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} md={8} lg={6}>
+            <Card>
+              <Statistic
+                title="Lowest Price"
+                value={priceTrends.length > 0 ?
+                  Math.min(...priceTrends.map(item => Number(item.price))) : 0}
+                precision={2}
+                prefix="$"
+              />
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} md={8} lg={6}>
+            <Card>
+              <Statistic
+                title="Data Points"
+                value={priceTrends.length}
+              />
+            </Card>
+          </Col>
+        </Row>
+
+        {/* Charts Section */}
+        <Row gutter={16} style={{ marginBottom: 24 }}>
+          <Col xs={24} lg={12}>
+            <Card title="Price Trends Over Time" loading={loading.trends}>
+              <Line
+                data={trendsChartData}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    tooltip: {
+                      callbacks: {
+                        label: (context) => `$${context.parsed.y.toFixed(2)}`
+                      }
+                    }
+                  },
+                  scales: {
+                    y: {
+                      ticks: {
+                        callback: (value) => `$${value}`
+                      }
+                    }
+                  }
+                }}
+                height={300}
+              />
+            </Card>
+          </Col>
+          <Col xs={24} lg={12}>
+            <Card title="Regional Price Comparison" loading={loading.regional}>
+              <Bar
+                data={regionalChartData}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    tooltip: {
+                      callbacks: {
+                        label: (context) => `$${context.parsed.y.toFixed(2)}`
+                      }
+                    }
+                  },
+                  scales: {
+                    y: {
+                      ticks: {
+                        callback: (value) => `$${value}`
+                      }
+                    }
+                  }
+                }}
+                height={300}
+              />
+            </Card>
+          </Col>
+        </Row>
