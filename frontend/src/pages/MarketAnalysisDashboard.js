@@ -139,3 +139,155 @@ const MarketAnalysisDashboard = () => {
       setLoading(prev => ({ ...prev, recording: false }));
     }
   };
+  
+  useEffect(() => {
+    fetchPriceTrends();
+    fetchRegionalPrices();
+    fetchProducts();
+  }, []);
+
+  const trendsChartData = {
+    labels: priceTrends.map(item => moment(item.price_date).format('MMM DD')),
+    datasets: [
+      {
+        label: 'Price Trends',
+        data: priceTrends.map(item => Number(item.price)),  // Convert to number
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1,
+        fill: false
+      }
+    ]
+  };
+
+  const regionalChartData = {
+    labels: regionalPrices.map(item => item.region),
+    datasets: [
+      {
+        label: 'Average Price',
+        data: regionalPrices.map(item => Number(item.avg_price)),
+        backgroundColor: 'rgba(54, 162, 235, 0.5)'
+      }
+    ]
+  };
+
+  const trendColumns = [
+    {
+      title: 'Date',
+      dataIndex: 'price_date',
+      key: 'date',
+      render: date => moment(date).format('LL'),
+      sorter: (a, b) => new Date(a.price_date) - new Date(b.price_date)
+    },
+    {
+      title: 'Product',
+      dataIndex: 'product_name',
+      key: 'product',
+      sorter: (a, b) => a.product_name.localeCompare(b.product_name)
+    },
+    {
+      title: 'Meat Type',
+      dataIndex: 'meat_Type',
+      key: 'meatType',
+      filters: [
+        { text: 'Beef', value: 'Beef' },
+        { text: 'Pork', value: 'Pork' },
+        { text: 'Chicken', value: 'Chicken' },
+        { text: 'Lamb', value: 'Lamb' }
+      ],
+      onFilter: (value, record) => record.meat_Type === value,
+      sorter: (a, b) => a.meat_Type.localeCompare(b.meat_Type)
+    },
+    {
+      title: 'Cut Type',
+      dataIndex: 'cut_Type',
+      key: 'cutType',
+      filters: [
+        { text: 'Loin', value: 'Loin' },
+        { text: 'Rib', value: 'Rib' },
+        { text: 'Shoulder', value: 'Shoulder' },
+        { text: 'Leg', value: 'Leg' }
+      ],
+      onFilter: (value, record) => record.cut_Type === value,
+      sorter: (a, b) => a.cut_Type.localeCompare(b.cut_Type)
+    },
+    {
+      title: 'Price',
+      dataIndex: 'price',
+      key: 'price',
+      render: price => `$${Number(price).toFixed(2)}`,
+      sorter: (a, b) => Number(a.price) - Number(b.price)
+    },
+    {
+      title: 'Region',
+      dataIndex: 'region',
+      key: 'region',
+      render: region => <Tag color="blue">{region}</Tag>,
+      filters: [
+        { text: 'North', value: 'North' },
+        { text: 'South', value: 'South' },
+        { text: 'East', value: 'East' },
+        { text: 'West', value: 'West' }
+      ],
+      onFilter: (value, record) => record.region === value,
+      sorter: (a, b) => a.region.localeCompare(b.region)
+    }
+  ];
+
+  return (
+    <Layout>
+      <div className="market-analysis-dashboard" style={{ padding: '24px' }}>
+        <h1>Historical Price Analysis</h1>
+
+        <Card
+          title="Filters"
+          style={{ marginBottom: 24 }}
+          extra={
+            <Button
+              type="primary"
+              onClick={() => setRecordModalVisible(true)}
+            >
+              Record New Price
+            </Button>
+          }
+        >
+          <Row gutter={16}>
+            <Col xs={24} sm={12} md={6}>
+              <Select
+                placeholder="Select Meat Type"
+                style={{ width: '100%' }}
+                onChange={value => handleFilterChange('meatType', value)}
+                allowClear
+              >
+                <Option value="Beef">Beef</Option>
+                <Option value="Pork">Pork</Option>
+                <Option value="Chicken">Chicken</Option>
+                <Option value="Lamb">Lamb</Option>
+              </Select>
+            </Col>
+            <Col xs={24} sm={12} md={6}>
+              <Select
+                placeholder="Select Cut Type"
+                style={{ width: '100%' }}
+                onChange={value => handleFilterChange('cutType', value)}
+                allowClear
+              >
+                <Option value="Loin">Loin</Option>
+                <Option value="Rib">Rib</Option>
+                <Option value="Shoulder">Shoulder</Option>
+                <Option value="Leg">Leg</Option>
+              </Select>
+            </Col>
+            <Col xs={24} sm={12} md={6}>
+              <RangePicker
+                style={{ width: '100%' }}
+                value={filters.dateRange}
+                onChange={dates => handleFilterChange('dateRange', dates)}
+              />
+            </Col>
+            <Col xs={24} sm={12} md={6}>
+              <Button type="primary" onClick={applyFilters} block>
+                Apply Filters
+              </Button>
+            </Col>
+          </Row>
+        </Card>
