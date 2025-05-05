@@ -100,3 +100,130 @@ const LandingPage = () => {
             <div style={styles.heroImageInner}></div>
           </div>
         </section>
+        
+        <section style={styles.statsSection}>
+          <div style={styles.statCard}>
+            <span style={styles.statNumber}>85%</span>
+            <p style={styles.statDescription}>Supply Chain Optimization</p>
+          </div>
+          <div style={styles.statCard}>
+            <span style={styles.statNumber}>24/7</span>
+            <p style={styles.statDescription}>Real-time Market Data</p>
+          </div>
+          <div style={styles.statCard}>
+            <span style={styles.statNumber}>100+</span>
+            <p style={styles.statDescription}>Industry Partners</p>
+          </div>
+        </section>
+
+        {/* New Section for Bangladesh Data */}
+        <section style={styles.bangladeshDataSection}>
+          <h2 style={styles.sectionTitle}>Bangladesh Insights (2025 Projections)</h2>
+          <div style={styles.dataCardContainer} className="data-card-container">
+            {/* GDP Card */}
+            <div style={styles.dataCard}>
+              <h3 style={styles.dataCardTitle}>GDP & Consumption</h3>
+              <div style={styles.cardContent}>
+                <div style={styles.dataTextContent}>
+                  <ul style={styles.dataList}>
+                    <li style={styles.dataListItem}><strong style={styles.dataListStrong}>Year:</strong> 2025</li>
+                    <li style={styles.dataListItem}><strong style={styles.dataListStrong}>Population:</strong> ~175 Million</li>
+                    <li style={styles.dataListItem}><strong style={styles.dataListStrong}>Meat & Fish Consumption:</strong> ~215 g/capita/day</li>
+                    <li style={styles.dataListItem}><strong style={styles.dataListStrong}>GDP:</strong> ~$510 Billion</li>
+                    <li style={styles.dataListItem}><strong style={styles.dataListStrong}>Source:</strong> Projected from HIES/BBS Data</li>
+                  </ul>
+                </div>
+                <div style={styles.chartContainer}>
+                  <Bar 
+                    data={{
+                      labels: ['2021', '2022', '2023', '2024', '2025'],
+                      datasets: [
+                        {
+                          label: 'GDP (Billion USD)',
+                          data: [415, 460, 480, 495, 510],
+                          backgroundColor: 'rgba(79, 70, 229, 0.6)',
+                          borderColor: 'rgba(79, 70, 229, 1)',
+                          borderWidth: 1,
+                        },
+                      ],
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        title: {
+                          display: true,
+                          text: 'Bangladesh GDP Projection',
+                          font: {
+                            size: 14,
+                            weight: 'bold'
+                          }
+                        },
+                        legend: {
+                          display: false,
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Nutrition Value Card */}
+            <div style={styles.dataCard}>
+              <h3 style={styles.dataCardTitle}>Average Nutrition</h3>
+              <div style={styles.cardContent}>
+                <div style={styles.dataTextContent}>
+                  <ul style={styles.dataList}>
+                    <li style={styles.dataListItem}><strong style={styles.dataListStrong}>Daily Protein Intake:</strong> ~72 g/capita</li>
+                    <li style={styles.dataListItem}><strong style={styles.dataListStrong}>Gender:</strong> All</li>
+                    <li style={styles.dataListItem}><strong style={styles.dataListStrong}>Age Group:</strong> All Ages</li>
+                    <li style={styles.dataListItem}><strong style={styles.dataListStrong}>Primary Sources:</strong> Rice, Fish, Meat, Pulses</li>
+                    <li style={styles.dataListItem}><strong style={styles.dataListStrong}>Source:</strong> Projected from HIES/BBS Data</li>
+                  </ul>
+                </div>
+                <div style={styles.chartContainer}>
+                  <Pie
+                    data={{
+                      labels: ['Rice', 'Fish', 'Meat', 'Pulses', 'Others'],
+                      datasets: [
+                        {
+                          data: [32, 27, 22, 13, 6],
+                          backgroundColor: [
+                            'rgba(79, 70, 229, 0.8)',
+                            'rgba(129, 140, 248, 0.8)',
+                            'rgba(165, 180, 252, 0.8)',
+                            'rgba(196, 181, 253, 0.8)',
+                            'rgba(224, 231, 255, 0.8)'
+                          ],
+                          borderColor: [
+                            'rgba(79, 70, 229, 1)',
+                            'rgba(129, 140, 248, 1)',
+                            'rgba(165, 180, 252, 1)',
+                            'rgba(196, 181, 253, 1)',
+                            'rgba(224, 231, 255, 1)'
+                          ],
+                          borderWidth: 1,
+                        },
+                      ],
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        title: {
+                          display: true,
+                          text: 'Protein Sources (%)',
+                          font: {
+                            size: 14,
+                            weight: 'bold'
+                          }
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
