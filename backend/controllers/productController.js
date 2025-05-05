@@ -40,3 +40,26 @@ exports.createProduct = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
+exports.updateProduct = async (req, res) => {
+  const {productData,productId} = req.body;
+  
+  try {
+    // First check if product exists
+    const [product] = await db.query('SELECT * FROM MeatProduct WHERE product_ID = ?', [productId]);
+    if (product.length === 0) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Update the product
+    const [result] = await db.query('UPDATE MeatProduct SET ? WHERE product_ID = ?', [productData, productId]);
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Product not found or no changes made' });
+    }
+    
+    res.json({ message: 'Product updated successfully' });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
