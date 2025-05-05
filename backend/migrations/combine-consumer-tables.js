@@ -65,3 +65,41 @@ async function combineTables() {
             throw error;
           }
           
+              // 4. Update the schema.sql file to reflect these changes
+    console.log('\n4. Note: Please update your schema.sql file to reflect these changes');
+    console.log('   The ConsumptionPattern table should be removed and the Consumer table updated');
+    
+    console.log('\n=== MIGRATION COMPLETED SUCCESSFULLY ===');
+    console.log('\nYou can now access consumption pattern data directly from the consumer table.');
+    console.log('For backward compatibility, you can use the consumption_patterns_view.');
+    
+  } catch (error) {
+    console.error('\n❌ MIGRATION FAILED:', error);
+    console.log('\nRolling back changes...');
+    
+    try {
+      // Check if we need to rollback consumer table changes
+      const [columns] = await db.query('SHOW COLUMNS FROM consumer LIKE "region"');
+      if (columns.length > 0) {
+        // The migration started, need to rollback
+        console.log('   Rolling back consumer table changes...');
+        await db.query(`
+          ALTER TABLE consumer
+          DROP COLUMN region,
+          DROP COLUMN season,
+          DROP COLUMN consumption_amount,
+          DROP COLUMN record_date
+        `);
+        console.log('   ✅ Consumer table restored to original state');
+      }
+    } catch (rollbackError) {
+      console.error('   ❌ Error during rollback:', rollbackError.message);
+      console.error('   ⚠️ MANUAL INTERVENTION REQUIRED! Database may be in an inconsistent state.');
+    }
+  } finally {
+    process.exit();
+  }
+}
+
+// Execute the migration
+combineTables();
