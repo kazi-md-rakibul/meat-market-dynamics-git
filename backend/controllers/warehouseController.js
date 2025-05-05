@@ -33,3 +33,44 @@ exports.createWarehouse = async (req, res) => {
         });
     }
 };
+
+exports.updateWarehouse = async (req, res) => {
+    console.log('Update warehouse request received:', { params: req.params, body: req.body });
+    const { id } = req.params;
+    const { address, current_stock, capacity, storage_condition } = req.body;
+
+    if (!address || current_stock === undefined || !capacity || !storage_condition) {
+        console.log('Missing required fields:', { address, current_stock, capacity, storage_condition });
+        return res.status(400).json({
+            message: 'Missing required fields',
+            error: 'All fields are required'
+        });
+    }
+
+    try {
+        console.log('Attempting to update warehouse:', { id, address, current_stock, capacity, storage_condition });
+        const [result] = await db.query(
+            'UPDATE Warehouse SET address = ?, current_Stock = ?, capacity = ?, storage_Condition = ? WHERE warehouse_ID = ?',
+            [address, current_stock, capacity, storage_condition, id]
+        );
+
+        console.log('Update result:', result);
+        if (result.affectedRows === 0) {
+            console.log('No warehouse found with ID:', id);
+            return res.status(404).json({ message: 'Warehouse not found' });
+        }
+
+        const [updatedWarehouse] = await db.query('SELECT * FROM Warehouse WHERE warehouse_ID = ?', [id]);
+        console.log('Updated warehouse:', updatedWarehouse[0]);
+        res.json({
+            message: 'Warehouse updated successfully',
+            warehouse: updatedWarehouse[0]
+        });
+    } catch (err) {
+        console.error('Error updating warehouse:', err);
+        res.status(400).json({
+            message: 'Failed to update warehouse',
+            error: err.message
+        });
+    }
+};
