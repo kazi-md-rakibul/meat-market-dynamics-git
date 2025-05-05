@@ -472,3 +472,51 @@ class ErrorBoundary extends Component {
               <OrderManagement />
             </ErrorBoundary>
           </Box>
+                    {/* Delivery Management */}
+                    <Box>
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              mb: 2 
+            }}>
+              <Box sx={{ 
+                width: '4px', 
+                height: '24px', 
+                borderRadius: '4px', 
+                bgcolor: '#ef4444', 
+                mr: 2 
+              }} />
+              <Typography 
+                variant="h5" 
+                sx={{ 
+                  fontWeight: 600, 
+                  color: '#1a1a1a'
+                }}
+              >
+                Delivery Management
+              </Typography>
+            </Box>
+            <ErrorBoundary fallback={
+              <Card sx={{ 
+                borderRadius: '16px', 
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                p: 3,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center' 
+              }}>
+                <CardContent>
+                  <Typography sx={{ color: '#666' }}>Delivery Management unavailable</Typography>
+                </CardContent>
+              </Card>
+            }>
+              <DeliveryManagement />
+            </ErrorBoundary>
+          </Box>
+        </Box>
+      </Box>
+    </Layout>
+  );
+};
+
+export default HomeDashboard;
