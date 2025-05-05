@@ -394,3 +394,115 @@ const MarketAnalysisDashboard = () => {
             </Card>
           </Col>
         </Row>
+        
+        {/* Data Tables Section */}
+        <Row gutter={16}>
+          <Col xs={24}>
+            <Card
+              title="Price Trends Data"
+              loading={loading.trends}
+              extra={
+                <Space>
+                  <Button
+                    type="default"
+                    onClick={fetchPriceTrends}
+                    loading={loading.trends}
+                  >
+                    Refresh
+                  </Button>
+                </Space>
+              }
+            >
+              <Table
+                columns={trendColumns}
+                dataSource={priceTrends}
+                rowKey="record_ID"
+                scroll={{ x: true }}
+                pagination={{ pageSize: 5 }}
+              />
+            </Card>
+          </Col>
+        </Row>
+
+        {/* Record Price Modal */}
+        <Modal
+          title="Record New Market Price"
+          visible={recordModalVisible}
+          onCancel={() => setRecordModalVisible(false)}
+          footer={null}
+          destroyOnClose
+        >
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={recordPrice}
+          >
+            <Item
+              name="productId"
+              label="Product"
+              rules={[{ required: true, message: 'Please select a product' }]}
+            >
+              <Select
+                placeholder="Select Product"
+                loading={loading.products}
+                showSearch
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                }
+              >
+                {products.map(product => (
+                  <Option key={product.product_ID} value={product.product_ID}>
+                    {product.product_name} ({product.meat_Type} - {product.cut_Type})
+                  </Option>
+                ))}
+              </Select>
+            </Item>
+            <Item
+              name="date"
+              label="Date"
+              rules={[{ required: true, message: 'Please select a date' }]}
+            >
+              <DatePicker style={{ width: '100%' }} />
+            </Item>
+            <Item
+              name="price"
+              label="Price ($)"
+              rules={[
+                { required: true, message: 'Please enter the price' },
+                { pattern: /^\d+(\.\d{1,2})?$/, message: 'Please enter a valid price' }
+              ]}
+            >
+              <Input prefix="$" type="number" step="0.01" />
+            </Item>
+            <Item
+              name="region"
+              label="Region"
+              rules={[{ required: true, message: 'Please select a region' }]}
+            >
+              <Select placeholder="Select Region">
+                <Option value="North">North</Option>
+                <Option value="South">South</Option>
+                <Option value="East">East</Option>
+                <Option value="West">West</Option>
+              </Select>
+            </Item>
+            <Divider />
+            <Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                loading={loading.recording}
+              >
+                Record Price
+              </Button>
+            </Item>
+          </Form>
+        </Modal>
+      </div>
+    </Layout>
+  );
+};
+
+export default MarketAnalysisDashboard;
