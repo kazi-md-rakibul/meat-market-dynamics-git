@@ -251,3 +251,97 @@ class ErrorBoundary extends Component {
         </Layout>
       );
     }
+    return (
+        <Layout>
+          <Box 
+            sx={{ 
+              p: 4,
+              background: 'linear-gradient(135deg, #f5f7fa 0%, #eef1f5 100%)',
+              minHeight: 'calc(100vh - 64px)',
+            }}
+          >
+            <Box 
+              sx={{ 
+                display: 'flex',
+                flexDirection: { xs: 'column', md: 'row' },
+                justifyContent: 'space-between',
+                alignItems: { xs: 'flex-start', md: 'center' },
+                mb: 5 
+              }}
+            >
+              <Box>
+                <Typography 
+                  variant="h4" 
+                  sx={{ 
+                    fontWeight: 700,
+                    color: '#1a1a1a',
+                    position: 'relative',
+                    display: 'inline-block',
+                    mb: 1
+                  }}
+                >
+                  Meat Market Dashboard
+                  <Box 
+                    sx={{ 
+                      position: 'absolute',
+                      bottom: '-8px',
+                      left: '0',
+                      width: '40%',
+                      height: '4px',
+                      background: 'linear-gradient(90deg, #4f46e5, rgba(79, 70, 229, 0.2))',
+                      borderRadius: '4px'
+                    }}
+                  />
+                </Typography>
+                <Typography 
+                  variant="body1" 
+                  sx={{ 
+                    color: '#666',
+                    fontWeight: 400,
+                    mt: 1
+                  }}
+                >
+                  {new Date().toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </Typography>
+              </Box>
+            </Box>
+    
+            <Grid container spacing={3} sx={{ mb: 5 }}>
+              <Grid item xs={12} sm={6} md={3}>
+                <StatCard
+                  title="Total Cattle"
+                  value={stats.totalCattle}
+                  icon={PetsIcon}
+                  color="#4f46e5"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <StatCard
+                  title="Total Products"
+                  value={stats.totalProducts}
+                  icon={InventoryIcon}
+                  color="#10b981"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <StatCard
+                  title="Active Deliveries"
+                  value={stats.activeDeliveries}
+                  icon={LocalShippingIcon}
+                  color="#f59e0b"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <StatCard
+                  title="Processing Units"
+                  value={stats.processingUnits}
+                  icon={StoreIcon}
+                  color="#ef4444"
+                />
+              </Grid>
+            </Grid>
