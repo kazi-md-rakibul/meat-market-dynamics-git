@@ -31,3 +31,37 @@ async function combineTables() {
       await db.query(`ALTER TABLE consumer ADD COLUMN consumption_amount DECIMAL(10,2) DEFAULT 0.00 NOT NULL`);
       await db.query(`ALTER TABLE consumer ADD COLUMN record_date DATE NOT NULL`);
       
+            // Update the record_date to current date
+            await db.query(`UPDATE consumer SET record_date = CURDATE()`);
+      
+            console.log('   ✅ Added consumption pattern fields to consumer table');
+          } catch (error) {
+            console.error('   ❌ Error altering consumer table:', error.message);
+            throw error;
+          }
+          
+          // 3. Create a view that combines both tables for backward compatibility
+          console.log('\n3. Creating a combined view for backward compatibility...');
+          
+          try {
+            // Drop view if it exists
+            await db.query(`DROP VIEW IF EXISTS consumption_patterns_view`);
+            
+            // Create new view
+            await db.query(`
+              CREATE VIEW consumption_patterns_view AS
+              SELECT 
+                consumer_ID as pattern_ID,
+                preferred_Meat_Type as meat_Type,
+                region,
+                season,
+                consumption_amount,
+                record_date
+              FROM consumer
+            `);
+            console.log('   ✅ Created consumption_patterns_view');
+          } catch (error) {
+            console.error('   ❌ Error creating view:', error.message);
+            throw error;
+          }
+          
