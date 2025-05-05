@@ -18,3 +18,25 @@ exports.getProducts = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.getProductById = async (req, res) => {
+  try {
+    const [product] = await db.query(`
+      SELECT * FROM MeatProduct WHERE product_ID = ?
+    `, [req.params.id]);
+    res.json(product[0] || {});
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.createProduct = async (req, res) => {
+  const productData = req.body;
+  try {
+    const [result] = await db.query('INSERT INTO MeatProduct SET ?', productData);
+    console.log("result",result);
+    res.status(201).json({ product_ID: result.insertId });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
