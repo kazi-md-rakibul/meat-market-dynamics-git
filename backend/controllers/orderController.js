@@ -21,7 +21,6 @@ exports.getAllOrders = async (req, res) => {
     }
 };
 
-
 // Get order by ID
 exports.getOrderById = async (req, res) => {
     try {
@@ -99,7 +98,7 @@ exports.createOrder = async (req, res) => {
     }
 };
 
-// updated order
+// Update order
 exports.updateOrder = async (req, res) => {
     const { order_ID } = req.params;
     const { order_date, total_price, quantity, consumer_ID, delivery_ID, products } = req.body;
@@ -141,5 +140,57 @@ exports.updateOrder = async (req, res) => {
     } catch (err) {
         await db.query('ROLLBACK');
         res.status(400).json({ message: err.message });
+    }
+};
+
+// Delete order
+exports.deleteOrder = async (req, res) => {
+    const { order_ID } = req.params;
+
+    try {
+        await db.query('START TRANSACTION');
+
+        // Delete order products first (cascade will handle this, but being explicit)
+        await db.query('DELETE FROM orderproduct WHERE order_ID = ?', [order_ID]);
+
+        // Delete the order
+        const [result] = await db.query('DELETE FROM `order` WHERE order_ID = ?', [order_ID]);
+
+        if (result.affectedRows === 0) {
+            await db.query('ROLLBACK');
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        await db.query('COMMIT');
+
+        res.json({ message: 'Order deleted successfully' });
+    } catch (err) {
+        await db.query('ROLLBACK');
+        res.status(500).json({ message: err.message });
+    }
+};
+
+// Get orders by delivery
+exports.getOrdersByDelivery = async (req, res) => {
+    const { delivery_ID } = req.params;
+
+    try {
+        const [orders] = await db.query(`
+            SELECT 
+                o.*,
+                c.preferred_Meat_Type,
+                c.preferred_Cut,
+                d.delivery_Type,
+                d.delivery_Status,
+                d.date AS delivery_date
+            FROM \`order\` o
+            LEFT JOIN consumer c ON o.consumer_ID = c.consumer_ID
+            LEFT JOIN delivery d ON o.delivery_ID = d.delivery_ID
+            WHERE o.delivery_ID = ?
+        `, [delivery_ID]);
+
+        res.json(orders);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 };
