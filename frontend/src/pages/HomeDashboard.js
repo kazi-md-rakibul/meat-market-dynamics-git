@@ -345,3 +345,130 @@ class ErrorBoundary extends Component {
                 />
               </Grid>
             </Grid>
+                    {/* Management components are wrapped in error boundaries to prevent crashes */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+          {/* Farm Management */}
+          <Box>
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              mb: 2 
+            }}>
+              <Box sx={{ 
+                width: '4px', 
+                height: '24px', 
+                borderRadius: '4px', 
+                bgcolor: '#4f46e5', 
+                mr: 2 
+              }} />
+              <Typography 
+                variant="h5" 
+                sx={{ 
+                  fontWeight: 600, 
+                  color: '#1a1a1a'
+                }}
+              >
+                Farm Management
+              </Typography>
+            </Box>
+            <ErrorBoundary fallback={
+              <Card sx={{ 
+                borderRadius: '16px', 
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                p: 3,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center' 
+              }}>
+                <CardContent>
+                  <Typography sx={{ color: '#666' }}>Farm Management unavailable</Typography>
+                </CardContent>
+              </Card>
+            }>
+              <FarmManagement />
+            </ErrorBoundary>
+          </Box>
+          
+          {/* Cattle Management */}
+          <Box>
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              mb: 2 
+            }}>
+              <Box sx={{ 
+                width: '4px', 
+                height: '24px', 
+                borderRadius: '4px', 
+                bgcolor: '#10b981', 
+                mr: 2 
+              }} />
+              <Typography 
+                variant="h5" 
+                sx={{ 
+                  fontWeight: 600, 
+                  color: '#1a1a1a'
+                }}
+              >
+                Cattle Management
+              </Typography>
+            </Box>
+            <ErrorBoundary fallback={
+              <Card sx={{ 
+                borderRadius: '16px', 
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                p: 3,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center' 
+              }}>
+                <CardContent>
+                  <Typography sx={{ color: '#666' }}>Cattle Management unavailable</Typography>
+                </CardContent>
+              </Card>
+            }>
+              <CattleManagement />
+            </ErrorBoundary>
+          </Box>
+          
+          {/* Order Management */}
+          <Box>
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              mb: 2 
+            }}>
+              <Box sx={{ 
+                width: '4px', 
+                height: '24px', 
+                borderRadius: '4px', 
+                bgcolor: '#f59e0b', 
+                mr: 2 
+              }} />
+              <Typography 
+                variant="h5" 
+                sx={{ 
+                  fontWeight: 600, 
+                  color: '#1a1a1a'
+                }}
+              >
+                Order Management
+              </Typography>
+            </Box>
+            <ErrorBoundary fallback={
+              <Card sx={{ 
+                borderRadius: '16px', 
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                p: 3,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center' 
+              }}>
+                <CardContent>
+                  <Typography sx={{ color: '#666' }}>Order Management unavailable</Typography>
+                </CardContent>
+              </Card>
+            }>
+              <OrderManagement />
+            </ErrorBoundary>
+          </Box>
