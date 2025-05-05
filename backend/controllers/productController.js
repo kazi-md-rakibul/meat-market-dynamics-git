@@ -63,3 +63,64 @@ exports.updateProduct = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
+exports.deleteProduct = async (req, res) => {
+  const { product_ID } = req.body;
+
+  if (!product_ID) {
+    return res.status(400).json({ message: 'Product ID is required in request body' });
+  }
+
+  try {
+    await db.query('START TRANSACTION');
+
+    const [product] = await db.query('SELECT * FROM MeatProduct WHERE product_ID = ?', [product_ID]);
+    if (product.length === 0) {
+      await db.query('ROLLBACK');
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    const [orderProducts] = await db.query('SELECT * FROM OrderProduct WHERE product_ID = ?', [product_ID]);
+    if (orderProducts.length > 0) {
+      await db.query('ROLLBACK');
+      return res.status(409).json({ 
+        message: 'Cannot delete product - it appears in existing orders',
+        orderCount: orderProducts.length
+      });
+    }
+
+    await db.query('DELETE FROM HistoricalPrice WHERE product_ID = ?', [product_ID]);
+
+    const [result] = await db.query('DELETE FROM MeatProduct WHERE product_ID = ?', [product_ID]);
+
+    if (result.affectedRows === 0) {
+      await db.query('ROLLBACK');
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    await db.query('COMMIT');
+
+    res.json({ 
+      success: true,
+      message: 'Product and its price history deleted successfully',
+      product_ID: product_ID
+    });
+
+  } catch (err) {
+    await db.query('ROLLBACK');
+    
+    if (err.code === 'ER_ROW_IS_REFERENCED_2') {
+      return res.status(409).json({
+        success: false,
+        message: 'Cannot delete product - it has references in other tables',
+        suggestion: 'Check OrderProduct, HistoricalPrice, and other related tables'
+      });
+    }
+
+    res.status(500).json({ 
+      success: false,
+      message: err.message,
+      errorCode: err.code 
+    });
+  }
+};
