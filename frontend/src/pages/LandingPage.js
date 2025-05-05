@@ -227,3 +227,94 @@ const LandingPage = () => {
             </div>
           </div>
         </section>
+        
+        <section style={styles.features}>
+          <h2 style={styles.sectionTitle}>Our Services</h2>
+          <div style={styles.featureContainer} className="feature-container">
+            <div style={styles.featureCard}>
+              <div style={styles.featureIcon}>📊</div>
+              <h3 style={styles.featureTitle}>Market Analytics</h3>
+              <p style={styles.featureDescription}>
+                Comprehensive insights into meat market trends, pricing strategies, and consumer behaviors to make data-driven decisions.
+              </p>
+            </div>
+            
+            <div style={styles.featureCard}>
+              <div style={styles.featureIcon}>🥩</div>
+              <h3 style={styles.featureTitle}>Quality Management</h3>
+              <p style={styles.featureDescription}>
+                Advanced tracking systems for premium meat products, ensuring quality control throughout the supply chain.
+              </p>
+            </div>
+            
+            <div style={styles.featureCard}>
+              <div style={styles.featureIcon}>🔄</div>
+              <h3 style={styles.featureTitle}>Supply Chain Optimization</h3>
+              <p style={styles.featureDescription}>
+                End-to-end supply chain management solutions to streamline operations, reduce waste, and maximize efficiency.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section style={styles.testimonials}>
+          <h2 style={styles.sectionTitle}>What Our Users Say</h2>
+          <div style={styles.testimonialContainer}>
+            <div style={styles.testimonialCard}>
+              <p style={styles.testimonialText}>
+                "Meat Market Dynamics has revolutionized how we manage our meat production and distribution processes."
+              </p>
+              <div style={styles.testimonialAuthor}>
+                <strong>John Carter</strong> - Farm Manager
+              </div>
+            </div>
+            <div style={styles.testimonialCard}>
+              <p style={styles.testimonialText}>
+                "The analytics capabilities have given us unprecedented insights into consumer trends and market opportunities."
+              </p>
+              <div style={styles.testimonialAuthor}>
+                <strong>Sarah Miller</strong> - Supply Chain Director
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section style={styles.ctaSection}>
+          <h2 style={styles.ctaTitle}>Ready to Transform Your Meat Business?</h2>
+          <p style={styles.ctaDescription}>
+            Join the platform that's helping meat industry leaders make smarter decisions.
+          </p>
+          <Link to="/admin" style={styles.ctaButton}>
+            Get Started Now
+          </Link>
+        </section>
+      </main>
+
+      <footer style={styles.footer}>
+        <div style={styles.footerContent}>
+          <div style={styles.footerBrand}>
+            <h3 style={styles.footerLogo}>Meat Market Dynamics</h3>
+            <p style={styles.footerTagline}>Revolutionizing the meat industry</p>
+          </div>
+          <div style={styles.footerLinks}>
+            <div style={styles.footerLinkColumn}>
+              <h4 style={styles.footerLinkTitle}>Platform</h4>
+              <Link to="/meat-market" style={styles.footerLink}>Meat Market</Link>
+              <Link to="/about" style={styles.footerLink}>About</Link>
+              <Link to="/admin" style={styles.footerLink}>Admin</Link>
+            </div>
+            <div style={styles.footerLinkColumn}>
+              <h4 style={styles.footerLinkTitle}>Resources</h4>
+              <a href="/docs" style={styles.footerLink}>Documentation</a>
+              <a href="/api" style={styles.footerLink}>API</a>
+              <a href="/faq" style={styles.footerLink}>FAQ</a>
+            </div>
+          </div>
+        </div>
+        <div style={styles.footerBottom}>
+          <p>© {new Date().getFullYear()} Meat Market Dynamics. All rights reserved.</p>
+        </div>
+      </footer>
+    </div>
+  );
+};
