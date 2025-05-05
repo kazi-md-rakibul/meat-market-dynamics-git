@@ -74,3 +74,46 @@ exports.updateWarehouse = async (req, res) => {
         });
     }
 };
+exports.deleteWarehouse = async (req, res) => {
+    // Get the ID from either params or body
+    const id = req.params.id || req.body.id;
+    console.log('Delete warehouse request received:', { params: req.params, body: req.body, id });
+
+    if (!id) {
+        return res.status(400).json({ message: 'Warehouse ID is required' });
+    }
+
+    try {
+        // First check if the warehouse even exists
+        const [warehouse] = await db.query('SELECT * FROM Warehouse WHERE warehouse_ID = ?', [id]);
+        if (warehouse.length === 0) {
+            return res.status(404).json({ message: 'Warehouse not found' });
+        }
+
+        // Check if the warehouse is referenced by any deliveries
+        const [deliveries] = await db.query('SELECT COUNT(*) as count FROM Delivery WHERE warehouse_ID = ?', [id]);
+        console.log('Related deliveries check:', deliveries[0]);
+        
+        if (deliveries[0].count > 0) {
+            return res.status(400).json({
+                message: 'Cannot delete warehouse - it is referenced by deliveries'
+            });
+        }
+
+        console.log('Attempting to delete warehouse with ID:', id);
+        const [result] = await db.query('DELETE FROM Warehouse WHERE warehouse_ID = ?', [id]);
+        console.log('Delete result:', result);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Warehouse not found or could not be deleted' });
+        }
+
+        res.json({ message: 'Warehouse deleted successfully' });
+    } catch (err) {
+        console.error('Error deleting warehouse:', err);
+        res.status(500).json({
+            message: 'Failed to delete warehouse',
+            error: err.message
+        });
+    }
+};
