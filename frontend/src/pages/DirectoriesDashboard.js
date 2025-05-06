@@ -264,3 +264,129 @@ const DirectoriesDashboard = () => {
             key: 'salesVolume_perMonth',
             render: (value) => value ? `$${value}` : 'N/A',
         },
+        {
+            title: 'Avg Order Value',
+            dataIndex: 'average_Order_Value',
+            key: 'average_Order_Value',
+            render: (value) => value ? `$${value}` : 'N/A',
+        },
+        {
+            title: 'Actions',
+            key: 'actions',
+            render: (_, record) => (
+                <Space size="middle">
+                    <Button type="link" onClick={() => handleEditVendor(record)}>Edit</Button>
+                    <Button type="link" danger onClick={() => handleDeleteVendor(record.vendor_ID)}>Delete</Button>
+                </Space>
+            ),
+        },
+    ];
+
+    const farmerColumns = [
+        {
+            title: 'Farm ID',
+            dataIndex: 'farm_ID',
+            key: 'farm_ID',
+        },
+        {
+            title: 'Farm Name',
+            dataIndex: 'farm_Name',
+            key: 'farm_Name',
+        },
+        {
+            title: 'Livestock Type',
+            dataIndex: 'livestock_Type',
+            key: 'livestock_Type',
+        },
+        {
+            title: 'Available Stock',
+            dataIndex: 'available_Stock',
+            key: 'available_Stock',
+        },
+        {
+            title: 'Total Livestock',
+            dataIndex: 'total_livestock',
+            key: 'total_livestock',
+        },
+        {
+            title: 'Actions',
+            key: 'actions',
+            render: (_, record) => (
+                <Space size="middle">
+                    <Button type="link" onClick={() => handleEditFarmer(record)}>Edit</Button>
+                    <Button type="link" danger onClick={() => handleDeleteFarmer(record.farm_ID)}>Delete</Button>
+                </Space>
+            ),
+        },
+    ];
+
+    return (
+        <Layout>
+            <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'flex-end' }}>
+                {activeTab === 'vendors' ? (
+                    <Button type="primary" onClick={() => setIsVendorModalVisible(true)}>
+                        Add New Vendor
+                    </Button>
+                ) : (
+                    <Button type="primary" onClick={() => {
+                        setFormMode('create');
+                        setIsFarmerModalVisible(true);
+                    }}>
+                        Add New Farmer
+                    </Button>
+                )}
+            </div>
+
+            <Tabs activeKey={activeTab} onChange={setActiveTab}>
+                <TabPane tab="Vendors" key="vendors">
+                    {loading ? (
+                        <Spin size="large" />
+                    ) : (
+                        <Table
+                            dataSource={vendors}
+                            columns={vendorColumns}
+                            rowKey="vendor_ID"
+                            pagination={{ pageSize: 10 }}
+                            scroll={{ x: true }}
+                        />
+                    )}
+                </TabPane>
+                <TabPane tab="Farmers" key="farmers">
+                    {loading ? (
+                        <Spin size="large" />
+                    ) : (
+                        <Table
+                            dataSource={farmers}
+                            columns={farmerColumns}
+                            rowKey="farm_ID"
+                            pagination={{ pageSize: 10 }}
+                            scroll={{ x: true }}
+                        />
+                    )}
+                </TabPane>
+            </Tabs>
+
+            {/* Create Vendor Modal */}
+            <Modal
+                title={formMode === 'create' ? 'Create New Vendor' : 'Edit Vendor'}
+                visible={isVendorModalVisible}
+                onOk={formMode === 'create' ? handleCreateVendor : handleUpdateVendor}
+                onCancel={() => {
+                    setIsVendorModalVisible(false);
+                    vendorForm.resetFields();
+                    setCurrentVendor(null);
+                }}
+                confirmLoading={loading}
+                width={700}
+            >
+                <Form form={vendorForm} layout="vertical">
+                    <Form.Item
+                        name="vendor_Name"
+                        label="Vendor Name"
+                        rules={[
+                            { required: true, message: 'Please input the vendor name!' },
+                            { max: 100, message: 'Vendor name must be less than 100 characters' }
+                        ]}
+                    >
+                        <Input placeholder="Enter vendor name" />
+                    </Form.Item>
