@@ -199,3 +199,68 @@ const DirectoriesDashboard = () => {
             setLoading(false);
         }
     };
+
+    const handleEditVendor = (vendor) => {
+        setCurrentVendor(vendor);
+        setFormMode('edit');
+        vendorForm.setFieldsValue({
+            vendor_Name: vendor.vendor_Name,
+            business_Type: vendor.business_Type,
+            contact_number: vendor.contact_number,
+            address: vendor.address,
+            stock_Quantity: vendor.stock_Quantity
+        });
+        setIsVendorModalVisible(true);
+    };
+
+    const vendorColumns = [
+        {
+            title: 'Vendor ID',
+            dataIndex: 'vendor_ID',
+            key: 'vendor_ID',
+            sorter: (a, b) => a.vendor_ID - b.vendor_ID,
+        },
+        {
+            title: 'Vendor Name',
+            dataIndex: 'vendor_Name',
+            key: 'vendor_Name',
+            sorter: (a, b) => a.vendor_Name.localeCompare(b.vendor_Name),
+        },
+        {
+            title: 'Type',
+            dataIndex: 'vendor_type',
+            key: 'vendor_type',
+            render: (type) => {
+                let color = type === 'Retailer' ? 'green' : type === 'Wholeseller' ? 'blue' : 'orange';
+                return <Tag color={color}>{type}</Tag>;
+            },
+            filters: [
+                { text: 'Retailer', value: 'Retailer' },
+                { text: 'Wholeseller', value: 'Wholeseller' },
+                { text: 'Other', value: 'Other' },
+            ],
+            onFilter: (value, record) => record.vendor_type === value,
+        },
+        {
+            title: 'Contact',
+            dataIndex: 'contact_number',
+            key: 'contact_number',
+        },
+        {
+            title: 'Address',
+            dataIndex: 'address',
+            key: 'address',
+            ellipsis: true,
+        },
+        {
+            title: 'Stock',
+            dataIndex: 'stock_Quantity',
+            key: 'stock_Quantity',
+            sorter: (a, b) => a.stock_Quantity - b.stock_Quantity,
+        },
+        {
+            title: 'Sales Volume',
+            dataIndex: 'salesVolume_perMonth',
+            key: 'salesVolume_perMonth',
+            render: (value) => value ? `$${value}` : 'N/A',
+        },
