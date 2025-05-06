@@ -97,3 +97,105 @@ const DirectoriesDashboard = () => {
         try {
             const values = await farmerForm.validateFields();
             setLoading(true);
+
+            const farmerData = {
+                farm_Name: values.farm_Name,
+                livestock_Type: values.livestock_Type,
+                available_Stock: values.available_Stock,
+                address: values.address,
+                contact_info: values.contact_info
+            };
+
+            await axios.post('http://localhost:5000/api/directory/update-farmer', {
+                id: currentFarmer.farm_ID,
+                farmerData
+            });
+
+            message.success('Farmer updated successfully!');
+            setIsFarmerModalVisible(false);
+            farmerForm.resetFields();
+            setCurrentFarmer(null);
+            fetchData();
+        } catch (error) {
+            handleApiError(error, 'Failed to update farmer');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDeleteFarmer = async (id) => {
+        console.log("Call", id);
+        try {
+            setLoading(true);
+            await axios.post('http://localhost:5000/api/directory/delete-farmer', { id });
+            fetchData();
+            message.success('Farmer deleted successfully!');
+            fetchData();
+        } catch (error) {
+            handleApiError(error, 'Failed to delete farmer');
+        } finally {
+            setLoading(false);
+        }
+
+    };
+
+    const handleEditFarmer = (farmer) => {
+        setCurrentFarmer(farmer);
+        setFormMode('edit');
+        farmerForm.setFieldsValue({
+            farm_Name: farmer.farm_Name,
+            livestock_Type: farmer.livestock_Type,
+            available_Stock: farmer.available_Stock,
+            address: farmer.address,
+            contact_info: farmer.contact_info
+        });
+        setIsFarmerModalVisible(true);
+    };
+
+    const handleApiError = (error, defaultMessage) => {
+        if (error.response) {
+            message.error(error.response.data.message || defaultMessage);
+        } else {
+            message.error(defaultMessage);
+        }
+        console.error('API Error:', error);
+    };
+
+    const handleDeleteVendor = async (id) => {
+        try {
+            setLoading(true);
+            await axios.post('http://localhost:5000/api/directory/delete-vendor', { vendor_ID: id });
+            message.success('Vendor deleted successfully!');
+            fetchData();
+        } catch (error) {
+            handleApiError(error, 'Failed to delete vendor');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleUpdateVendor = async () => {
+        try {
+            const values = await vendorForm.validateFields();
+            setLoading(true);
+    
+            await axios.post('http://localhost:5000/api/directory/update-vendor', {
+                vendor_ID: currentVendor?.vendor_ID,
+                vendor_Name: values.vendor_Name,
+                address: values.address,
+                stock_Quantity: values.stock_Quantity,
+                contact_number: values.contact_number,
+                business_Type: values.business_Type
+            });
+    
+            message.success('Vendor updated successfully!');
+            setIsVendorModalVisible(false);
+            vendorForm.resetFields();
+            setCurrentVendor(null);
+            fetchData();
+        } catch (error) {
+            handleApiError(error, 'Failed to update vendor');
+        } finally {
+            setLoading(false);
+        }
+    };
