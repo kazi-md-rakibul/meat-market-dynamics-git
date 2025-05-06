@@ -177,4 +177,52 @@ const AnalyticsDashboard = () => {
               </Button>
             </Col>
           </Row>
+
+          <Spin spinning={loading}>
+          <Row gutter={[16, 16]}>
+            <Col span={24}>
+              <Card
+                title="Supply-Demand Gap Analysis"
+                bordered={false}
+                extra={
+                  <Text strong>Last Updated: {new Date().toLocaleString()}</Text>
+                }
+              >
+                <Table
+                  columns={gapColumns}
+                  dataSource={gapData}
+                  rowKey="meat_Type"
+                  pagination={false}
+                />
+              </Card>
+            </Col>
+          </Row>
+
+          <Row gutter={[16, 16]} style={{ marginTop: '24px' }}>
+            <Col span={24}>
+              <Card
+                title="Demand Forecasting"
+                bordered={false}
+                extra={
+                  <Text>
+                    Forecast Factor: <Text strong>{filters.forecastFactor}</Text>
+                  </Text>
+                }
+              >
+                <Table
+                  columns={forecastColumns}
+                  dataSource={forecastData}
+                  rowKey={(record) => `${record.meat_Type}-${record.period}`}
+                  pagination={{ pageSize: 5 }}
+                />
+              </Card>
+            </Col>
+          </Row>
+        </Spin>
+      </div>
+    </Layout>
+  );
+};
+
+export default AnalyticsDashboard;
   
