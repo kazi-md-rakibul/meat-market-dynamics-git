@@ -100,3 +100,81 @@ const AnalyticsDashboard = () => {
       dataIndex: 'period',
       key: 'period',
     },
+    {
+        title: 'Total Demand',
+        dataIndex: 'total_demand',
+        key: 'total_demand',
+        render: (value) => `${Number(value).toFixed(2)} kg`,
+      },
+      {
+        title: 'Average Demand',
+        dataIndex: 'avg_demand',
+        key: 'avg_demand',
+        render: (value) => `${Number(value).toFixed(2)} kg`,
+      },
+      {
+        title: 'Next Period Forecast',
+        dataIndex: 'forecast_next_period',
+        key: 'forecast_next_period',
+        render: (value) => (
+          <Text strong style={{ color: '#1890ff' }}>
+            {Number(value).toFixed(2)} kg
+          </Text>
+        ),
+      },
+      {
+        title: 'Data Points',
+        dataIndex: 'data_points',
+        key: 'data_points',
+      },
+    ];
+  
+    return (
+      <Layout>
+        <div style={{ padding: '24px' }}>
+          <Title level={2}>Analytics Dashboard</Title>
+  
+          <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
+            <Col span={8}>
+              <Select
+                style={{ width: '100%' }}
+                placeholder="Filter by Meat Type"
+                value={filters.meatType}
+                onChange={(value) => handleFilterChange('meatType', value)}
+              >
+                <Option value="all">All Meat Types</Option>
+                <Option value="Beef">Beef</Option>
+                <Option value="Pork">Pork</Option>
+                <Option value="Chicken">Chicken</Option>
+                <Option value="Lamb">Lamb</Option>
+              </Select>
+            </Col>
+            <Col span={8}>
+              <RangePicker
+                style={{ width: '100%' }}
+                value={filters.dateRange}
+                onChange={(dates) => handleFilterChange('dateRange', dates)}
+              />
+            </Col>
+            <Col span={6}>
+              <InputNumber
+                style={{ width: '100%' }}
+                min={0.5}
+                max={2}
+                step={0.1}
+                value={filters.forecastFactor}
+                onChange={(value) => handleFilterChange('forecastFactor', value)}
+                addonBefore="Forecast Factor"
+              />
+            </Col>
+            <Col span={2}>
+              <Button
+                type="primary"
+                onClick={handleRefresh}
+                loading={loading}
+              >
+                Refresh
+              </Button>
+            </Col>
+          </Row>
+  
