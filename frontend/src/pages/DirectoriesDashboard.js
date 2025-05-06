@@ -390,3 +390,171 @@ const DirectoriesDashboard = () => {
                     >
                         <Input placeholder="Enter vendor name" />
                     </Form.Item>
+
+                    <Form.Item
+                        name="business_Type"
+                        label="Business Type"
+                        rules={[{ required: true, message: 'Please select business type!' }]}
+                    >
+                        <Select placeholder="Select business type">
+                            <Option value="Retailer">Retailer</Option>
+                            <Option value="Wholeseller">Wholeseller</Option>
+                            <Option value="Other">Other</Option>
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item
+                        name="contact_number"
+                        label="Contact Number"
+                        rules={[
+                            { required: true, message: 'Please input contact number!' },
+                            { pattern: /^[0-9]+$/, message: 'Please enter valid phone number' }
+                        ]}
+                    >
+                        <Input placeholder="Enter contact number" />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="address"
+                        label="Address"
+                        rules={[
+                            { required: true, message: 'Please input address!' },
+                            { max: 255, message: 'Address must be less than 255 characters' }
+                        ]}
+                    >
+                        <Input.TextArea rows={3} placeholder="Enter full address" />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="stock_Quantity"
+                        label="Stock Quantity"
+                        rules={[
+                            { required: true, message: 'Please input stock quantity!' },
+                            { type: 'string' }
+                        ]}
+                    >
+                        <Input type="string" placeholder="Enter stock quantity" />
+                    </Form.Item>
+                </Form>
+            </Modal>
+
+            <Modal
+                title={formMode === 'create' ? 'Create New Farmer' : 'Edit Farmer'}
+                visible={isFarmerModalVisible}
+                onOk={formMode === 'create' ? handleCreateFarmer : handleUpdateFarmer}
+                onCancel={() => {
+                    setIsFarmerModalVisible(false);
+                    farmerForm.resetFields();
+                    setCurrentFarmer(null);
+                }}
+                confirmLoading={loading}
+                width={700}
+            >
+                <Form form={farmerForm} layout="vertical">
+                    <Form.Item
+                        name="farm_Name"
+                        label="Farm Name"
+                        rules={[
+                            { required: true, message: 'Please input the farm name!' },
+                            { max: 100, message: 'Farm name must be less than 100 characters' }
+                        ]}
+                    >
+                        <Input placeholder="Enter farm name" />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="livestock_Type"
+                        label="Livestock Type"
+                        rules={[{ required: true, message: 'Please select livestock type!' }]}
+                    >
+                        <Select placeholder="Select livestock type">
+                            <Option value="Cattle">Cattle</Option>
+                            <Option value="Poultry">Poultry</Option>
+                            <Option value="Sheep">Sheep</Option>
+                            <Option value="Goats">Goats</Option>
+                            <Option value="Pigs">Pigs</Option>
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item
+                        name="available_Stock"
+                        label="Available Stock"
+                        rules={[
+                            { required: true, message: 'Please input available stock!' },
+                            { type: 'String' }
+                        ]}
+                    >
+                        <Input type="string" placeholder="Enter available stock" />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="contact_info"
+                        label="Contact Information"
+                        rules={[
+                            { required: true, message: 'Please input contact information!' },
+                            { max: 100, message: 'Contact info must be less than 100 characters' }
+                        ]}
+                    >
+                        <Input placeholder="Enter contact information" />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="address"
+                        label="Address"
+                        rules={[
+                            { required: true, message: 'Please input address!' },
+                            { max: 255, message: 'Address must be less than 255 characters' }
+                        ]}
+                    >
+                        <Input.TextArea rows={3} placeholder="Enter full address" />
+                    </Form.Item>
+                </Form>
+            </Modal>
+
+            <Modal
+                title="Farmer Details"
+                visible={isViewFarmerModalVisible}
+                onCancel={() => setIsViewFarmerModalVisible(false)}
+                footer={[
+                    <Button key="close" onClick={() => setIsViewFarmerModalVisible(false)}>
+                        Close
+                    </Button>
+                ]}
+                width={800}
+            >
+                {currentFarmer && (
+                    <div>
+                        <h3>Farm Information</h3>
+                        <p><strong>Farm ID:</strong> {currentFarmer.farm_ID}</p>
+                        <p><strong>Farm Name:</strong> {currentFarmer.farm_Name}</p>
+                        <p><strong>Livestock Type:</strong> {currentFarmer.livestock_Type}</p>
+                        <p><strong>Available Stock:</strong> {currentFarmer.available_Stock}</p>
+                        <p><strong>Total Livestock:</strong> {currentFarmer.total_livestock}</p>
+                        <p><strong>Address:</strong> {currentFarmer.address}</p>
+                        <p><strong>Contact:</strong> {currentFarmer.contact_info}</p>
+
+                        {currentFarmer.cattle && currentFarmer.cattle.length > 0 && (
+                            <>
+                                <h3 style={{ marginTop: '20px' }}>Cattle Details</h3>
+                                <Table
+                                    dataSource={currentFarmer.cattle}
+                                    columns={[
+                                        { title: 'Cattle ID', dataIndex: 'cattle_ID', key: 'cattle_ID' },
+                                        { title: 'Type', dataIndex: 'cattle_Type', key: 'cattle_Type' },
+                                        { title: 'Quantity', dataIndex: 'quantity', key: 'quantity' },
+                                        { title: 'Age', dataIndex: 'age', key: 'age' },
+                                        { title: 'Weight', dataIndex: 'weight', key: 'weight' },
+                                    ]}
+                                    pagination={false}
+                                    size="small"
+                                />
+                            </>
+                        )}
+                    </div>
+                )}
+            </Modal>
+        </Layout>
+    );
+};
+
+export default DirectoriesDashboard;
