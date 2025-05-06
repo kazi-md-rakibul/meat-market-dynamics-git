@@ -209,3 +209,68 @@ exports.createBatch = async (req, res) => {
     });
   }
 };
+
+exports.updateBatch = async (req, res) => {
+    const {batchId} = req.body;
+    
+    try {
+      const [batch] = await db.query('SELECT * FROM MeatBatch WHERE batch_ID = ?', [batchId]);
+      if (batch.length === 0) {
+        return res.status(404).json({ message: 'Batch not found' });
+      }
+  
+      const updateData = {
+        unit_ID: req.body.unit_ID,
+        warehouse_ID: req.body.warehouse_ID || null,
+        total_Weight: req.body.total_Weight,
+        batch_Status: req.body.batch_Status,
+        production_Date: new Date(req.body.dateRange[0]).toISOString().split('T')[0],
+        expiration_Date: new Date(req.body.dateRange[1]).toISOString().split('T')[0]
+      };
+  
+      await db.query('UPDATE MeatBatch SET ? WHERE batch_ID = ?', [updateData, batchId]);
+      
+      res.json({ 
+        message: 'Batch updated successfully',
+        batch_ID: batchId
+      });
+    } catch (err) {
+      console.error('Error updating batch:', err);
+      res.status(500).json({ 
+        message: 'Failed to update batch',
+        error: err.message 
+      });
+    }
+  };
+  
+  exports.deleteBatch = async (req, res) => {
+    const {batchId} = req.body;
+    
+    try {
+      const [batch] = await db.query('SELECT * FROM MeatBatch WHERE batch_ID = ?', [batchId]);
+      if (batch.length === 0) {
+        return res.status(404).json({ message: 'Batch not found' });
+      }
+  
+      const [products] = await db.query('SELECT * FROM MeatProduct WHERE batch_ID = ?', [batchId]);
+      if (products.length > 0) {
+        return res.status(400).json({ 
+          message: 'Cannot delete batch with associated meat products',
+          productCount: products.length
+        });
+      }
+  
+      await db.query('DELETE FROM MeatBatch WHERE batch_ID = ?', [batchId]);
+      
+      res.json({ 
+        message: 'Batch deleted successfully',
+        batch_ID: batchId
+      });
+    } catch (err) {
+      console.error('Error deleting batch:', err);
+      res.status(500).json({ 
+        message: 'Failed to delete batch',
+        error: err.message 
+      });
+    }
+  };
