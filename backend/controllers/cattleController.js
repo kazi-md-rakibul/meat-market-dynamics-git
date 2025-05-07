@@ -20,7 +20,7 @@ exports.getAllCattle = async (req, res) => {
     }
 };
 
-// Get cattle by ID
+// Get cattle by ID 
 exports.getCattleById = async (req, res) => {
     try {
         const [cattle] = await db.query(`
