@@ -1,6 +1,13 @@
 const db = require('../config/db');
+
+/**
+ * Calculates the supply-demand gap for each meat type
+ * @returns {Object} JSON response containing supply-demand gap analysis
+ */
 exports.getSupplyDemandGap = async (req, res) => {
   try {
+    console.log('Calculating supply-demand gap...');
+    
     const [gap] = await db.query(`
       SELECT 
         p.meat_Type,
@@ -18,18 +25,63 @@ exports.getSupplyDemandGap = async (req, res) => {
       FROM MeatProduct p
       GROUP BY p.meat_Type
     `);
+
+    if (!gap || gap.length === 0) {
+      console.log('No supply-demand data found');
+      return res.status(404).json({ 
+        message: "No supply-demand data available",
+        suggestion: "Ensure there are products and orders in the system"
+      });
+    }
+
+    console.log(`Successfully calculated gap for ${gap.length} meat types`);
     res.json(gap);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('Error in getSupplyDemandGap:', err);
+    res.status(500).json({ 
+      message: "Failed to calculate supply-demand gap",
+      error: err.message,
+      suggestion: "Check database connection and table structure"
+    });
   }
 };
+
+/**
+ * Generates demand forecast based on historical order data
+ * @param {Object} req.query - Query parameters
+ * @param {string} [req.query.meatType] - Filter by meat type
+ * @param {string} [req.query.startDate] - Start date for analysis (YYYY-MM-DD)
+ * @param {string} [req.query.endDate] - End date for analysis (YYYY-MM-DD)
+ * @param {number} [req.query.forecastFactor=1.1] - Growth factor for forecast
+ * @returns {Object} JSON response containing forecast data and parameters
+ */
 exports.getDemandForecast = async (req, res) => {
   try {
     const { meatType, startDate, endDate, forecastFactor = 1.1 } = req.query;
+    console.log('Generating demand forecast with params:', { meatType, startDate, endDate, forecastFactor });
 
+    // Validate forecast factor
     const factor = parseFloat(forecastFactor);
     if (isNaN(factor) || factor <= 0) {
-      return res.status(400).json({ message: "Invalid forecast factor" });
+      console.log('Invalid forecast factor:', forecastFactor);
+      return res.status(400).json({ 
+        message: "Invalid forecast factor",
+        suggestion: "Provide a positive number for forecast factor"
+      });
+    }
+
+    // Validate dates if provided
+    if (startDate && !isValidDate(startDate)) {
+      return res.status(400).json({ 
+        message: "Invalid start date format",
+        suggestion: "Use YYYY-MM-DD format"
+      });
+    }
+    if (endDate && !isValidDate(endDate)) {
+      return res.status(400).json({ 
+        message: "Invalid end date format",
+        suggestion: "Use YYYY-MM-DD format"
+      });
     }
 
     let query = `
@@ -75,15 +127,18 @@ exports.getDemandForecast = async (req, res) => {
       ORDER BY p.meat_Type, period
     `;
 
+    console.log('Executing forecast query with params:', params);
     const [forecast] = await db.query(query, params);
 
     if (forecast.length === 0) {
+      console.log('No forecast data found for the given criteria');
       return res.status(404).json({
         message: "No data available for the selected criteria",
         suggestion: "Try broadening your date range or removing filters"
       });
     }
 
+    console.log(`Successfully generated forecast for ${forecast.length} periods`);
     res.json({
       forecast,
       parameters: {
@@ -91,13 +146,31 @@ exports.getDemandForecast = async (req, res) => {
         startDate,
         endDate,
         forecastFactor: factor
+      },
+      metadata: {
+        generatedAt: new Date().toISOString(),
+        dataPoints: forecast.reduce((sum, row) => sum + row.data_points, 0)
       }
     });
   } catch (err) {
     console.error("Forecast error:", err);
     res.status(500).json({
       message: "Failed to generate demand forecast",
-      error: err.message
+      error: err.message,
+      suggestion: "Check database connection and data integrity"
     });
   }
 };
+
+/**
+ * Validates date string format (YYYY-MM-DD)
+ * @param {string} dateString - Date string to validate
+ * @returns {boolean} True if date is valid
+ */
+function isValidDate(dateString) {
+  const regex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!regex.test(dateString)) return false;
+  
+  const date = new Date(dateString);
+  return date instanceof Date && !isNaN(date);
+}
