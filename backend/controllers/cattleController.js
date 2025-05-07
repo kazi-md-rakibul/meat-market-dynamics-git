@@ -20,7 +20,7 @@ exports.getAllCattle = async (req, res) => {
     }
 };
 
-// Get cattle by ID
+// Get cattle by ID 
 exports.getCattleById = async (req, res) => {
     try {
         const [cattle] = await db.query(`
@@ -96,7 +96,7 @@ exports.updateCattle = async (req, res) => {
             }
         }
 
-        // Validate processing unit if provided
+        // Validate processing unit if provided 
         if (unit_ID) {
             const [unit] = await db.query('SELECT * FROM processingunit WHERE unit_ID = ?', [unit_ID]);
             if (unit.length === 0) {
