@@ -22,14 +22,37 @@ import {
   MenuItem,
   Typography,
   Snackbar,
-  Alert
+  Alert,
+  Grid,
+  Card,
+  CardContent,
+  InputAdornment,
+  Tooltip,
+  TableSortLabel,
+  Chip
 } from '@mui/material';
 import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   Person as PersonIcon,
-  Add as AddIcon
+  Add as AddIcon,
+  Search as SearchIcon,
+  FileDownload as FileDownloadIcon,
+  FilterList as FilterListIcon
 } from '@mui/icons-material';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell
+} from 'recharts';
 
 const ConsumerManagement = () => {
   const [consumers, setConsumers] = useState([]);
@@ -48,6 +71,17 @@ const ConsumerManagement = () => {
     preferred_Cut: '',
     average_Order_Size: '',
     average_Spending: ''
+  });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortConfig, setSortConfig] = useState({ key: 'consumer_ID', direction: 'asc' });
+  const [filterDialogOpen, setFilterDialogOpen] = useState(false);
+  const [filters, setFilters] = useState({
+    meatType: '',
+    cutType: '',
+    minOrderSize: '',
+    maxOrderSize: '',
+    minSpending: '',
+    maxSpending: ''
   });
 
   // Meat type options
@@ -255,6 +289,117 @@ const ConsumerManagement = () => {
     }
   };
 
+  const calculateSummaryStats = () => {
+    if (!consumers.length) return {
+      totalConsumers: 0,
+      avgOrderSize: 0,
+      avgSpending: 0,
+      totalSpending: 0
+    };
+
+    const totalSpending = consumers.reduce((sum, consumer) => sum + parseFloat(consumer.average_Spending), 0);
+    const avgOrderSize = consumers.reduce((sum, consumer) => sum + parseFloat(consumer.average_Order_Size), 0) / consumers.length;
+    const avgSpending = totalSpending / consumers.length;
+
+    return {
+      totalConsumers: consumers.length,
+      avgOrderSize: avgOrderSize.toFixed(2),
+      avgSpending: avgSpending.toFixed(2),
+      totalSpending: totalSpending.toFixed(2)
+    };
+  };
+
+  const prepareChartData = () => {
+    const meatTypeData = {};
+    const cutTypeData = {};
+
+    consumers.forEach(consumer => {
+      meatTypeData[consumer.preferred_Meat_Type] = (meatTypeData[consumer.preferred_Meat_Type] || 0) + 1;
+      cutTypeData[consumer.preferred_Cut] = (cutTypeData[consumer.preferred_Cut] || 0) + 1;
+    });
+
+    return {
+      meatTypeData: Object.entries(meatTypeData).map(([name, value]) => ({ name, value })),
+      cutTypeData: Object.entries(cutTypeData).map(([name, value]) => ({ name, value }))
+    };
+  };
+
+  const handleSort = (key) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
+
+  const handleSearch = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleFilterChange = (event) => {
+    setFilters(prev => ({
+      ...prev,
+      [event.target.name]: event.target.value
+    }));
+  };
+
+  const applyFilters = (data) => {
+    return data.filter(consumer => {
+      const matchesSearch = consumer.consumer_name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesMeatType = !filters.meatType || consumer.preferred_Meat_Type === filters.meatType;
+      const matchesCutType = !filters.cutType || consumer.preferred_Cut === filters.cutType;
+      const matchesOrderSize = (!filters.minOrderSize || parseFloat(consumer.average_Order_Size) >= parseFloat(filters.minOrderSize)) &&
+                             (!filters.maxOrderSize || parseFloat(consumer.average_Order_Size) <= parseFloat(filters.maxOrderSize));
+      const matchesSpending = (!filters.minSpending || parseFloat(consumer.average_Spending) >= parseFloat(filters.minSpending)) &&
+                            (!filters.maxSpending || parseFloat(consumer.average_Spending) <= parseFloat(filters.maxSpending));
+
+      return matchesSearch && matchesMeatType && matchesCutType && matchesOrderSize && matchesSpending;
+    });
+  };
+
+  const sortData = (data) => {
+    return [...data].sort((a, b) => {
+      const aValue = a[sortConfig.key];
+      const bValue = b[sortConfig.key];
+      
+      if (typeof aValue === 'string') {
+        return sortConfig.direction === 'asc' 
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
+      
+      return sortConfig.direction === 'asc'
+        ? parseFloat(aValue) - parseFloat(bValue)
+        : parseFloat(bValue) - parseFloat(aValue);
+    });
+  };
+
+  const exportToCSV = () => {
+    const headers = ['ID', 'Name', 'Preferred Meat Type', 'Preferred Cut', 'Average Order Size', 'Average Spending'];
+    const csvData = consumers.map(consumer => [
+      consumer.consumer_ID,
+      consumer.consumer_name,
+      consumer.preferred_Meat_Type,
+      consumer.preferred_Cut,
+      consumer.average_Order_Size,
+      consumer.average_Spending
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...csvData.map(row => row.join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'consumers.csv';
+    link.click();
+  };
+
+  const stats = calculateSummaryStats();
+  const chartData = prepareChartData();
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#FF6B6B'];
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
@@ -262,51 +407,255 @@ const ConsumerManagement = () => {
           <PersonIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
           Consumer Management
         </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={() => handleOpen()}
-        >
-          Add Consumer
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<FilterListIcon />}
+            onClick={() => setFilterDialogOpen(true)}
+          >
+            Filters
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<FileDownloadIcon />}
+            onClick={exportToCSV}
+          >
+            Export
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => handleOpen()}
+          >
+            Add Consumer
+          </Button>
+        </Box>
       </Box>
 
+      {/* Summary Cards */}
+      <Grid container spacing={3} sx={{ mb: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom>
+                Total Consumers
+              </Typography>
+              <Typography variant="h4">
+                {stats.totalConsumers}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom>
+                Average Order Size
+              </Typography>
+              <Typography variant="h4">
+                {stats.avgOrderSize} kg
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom>
+                Average Spending
+              </Typography>
+              <Typography variant="h4">
+                ${stats.avgSpending}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom>
+                Total Spending
+              </Typography>
+              <Typography variant="h4">
+                ${stats.totalSpending}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* Charts */}
+      <Grid container spacing={3} sx={{ mb: 3 }}>
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Preferred Meat Types
+            </Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={chartData.meatTypeData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={true}
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {chartData.meatTypeData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <RechartsTooltip formatter={(value) => [`${value} consumers`, 'Count']} />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Preferred Cut Types
+            </Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={chartData.cutTypeData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <RechartsTooltip />
+                <Legend />
+                <Bar dataKey="value" name="Number of Consumers" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
+      </Grid>
+
+      {/* Search Bar */}
+      <Box sx={{ mb: 2 }}>
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="Search consumers..."
+          value={searchQuery}
+          onChange={handleSearch}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Box>
+
+      {/* Consumer Table */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Preferred Meat Type</TableCell>
-              <TableCell>Preferred Cut</TableCell>
-              <TableCell>Average Order Size (kg)</TableCell>
-              <TableCell>Average Spending ($)</TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortConfig.key === 'consumer_ID'}
+                  direction={sortConfig.key === 'consumer_ID' ? sortConfig.direction : 'asc'}
+                  onClick={() => handleSort('consumer_ID')}
+                >
+                  ID
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortConfig.key === 'consumer_name'}
+                  direction={sortConfig.key === 'consumer_name' ? sortConfig.direction : 'asc'}
+                  onClick={() => handleSort('consumer_name')}
+                >
+                  Name
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortConfig.key === 'preferred_Meat_Type'}
+                  direction={sortConfig.key === 'preferred_Meat_Type' ? sortConfig.direction : 'asc'}
+                  onClick={() => handleSort('preferred_Meat_Type')}
+                >
+                  Preferred Meat Type
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortConfig.key === 'preferred_Cut'}
+                  direction={sortConfig.key === 'preferred_Cut' ? sortConfig.direction : 'asc'}
+                  onClick={() => handleSort('preferred_Cut')}
+                >
+                  Preferred Cut
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortConfig.key === 'average_Order_Size'}
+                  direction={sortConfig.key === 'average_Order_Size' ? sortConfig.direction : 'asc'}
+                  onClick={() => handleSort('average_Order_Size')}
+                >
+                  Average Order Size (kg)
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortConfig.key === 'average_Spending'}
+                  direction={sortConfig.key === 'average_Spending' ? sortConfig.direction : 'asc'}
+                  onClick={() => handleSort('average_Spending')}
+                >
+                  Average Spending ($)
+                </TableSortLabel>
+              </TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {consumers.map((consumer) => (
+            {sortData(applyFilters(consumers)).map((consumer) => (
               <TableRow key={consumer.consumer_ID}>
                 <TableCell>{consumer.consumer_ID}</TableCell>
                 <TableCell>{consumer.consumer_name}</TableCell>
-                <TableCell>{consumer.preferred_Meat_Type}</TableCell>
-                <TableCell>{consumer.preferred_Cut}</TableCell>
+                <TableCell>
+                  <Chip
+                    label={consumer.preferred_Meat_Type}
+                    size="small"
+                    color="primary"
+                    variant="outlined"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Chip
+                    label={consumer.preferred_Cut}
+                    size="small"
+                    color="secondary"
+                    variant="outlined"
+                  />
+                </TableCell>
                 <TableCell>{Number(consumer.average_Order_Size).toFixed(2)}</TableCell>
                 <TableCell>${Number(consumer.average_Spending).toFixed(2)}</TableCell>
                 <TableCell>
-                  <IconButton color="primary" onClick={() => handleOpen(consumer)}>
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton color="error" onClick={() => handleDelete(consumer.consumer_ID)}>
-                    <DeleteIcon />
-                  </IconButton>
+                  <Tooltip title="Edit">
+                    <IconButton color="primary" onClick={() => handleOpen(consumer)}>
+                      <EditIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Delete">
+                    <IconButton color="error" onClick={() => handleDelete(consumer.consumer_ID)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
                 </TableCell>
               </TableRow>
             ))}
             {consumers.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} align="center">
+                <TableCell colSpan={7} align="center">
                   No consumers found
                 </TableCell>
               </TableRow>
@@ -314,6 +663,99 @@ const ConsumerManagement = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Filter Dialog */}
+      <Dialog open={filterDialogOpen} onClose={() => setFilterDialogOpen(false)}>
+        <DialogTitle>Filter Consumers</DialogTitle>
+        <DialogContent>
+          <Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <FormControl fullWidth>
+              <InputLabel>Meat Type</InputLabel>
+              <Select
+                name="meatType"
+                value={filters.meatType}
+                onChange={handleFilterChange}
+                label="Meat Type"
+              >
+                <MenuItem value="">All</MenuItem>
+                {meatTypes.map((type) => (
+                  <MenuItem key={type} value={type}>{type}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth>
+              <InputLabel>Cut Type</InputLabel>
+              <Select
+                name="cutType"
+                value={filters.cutType}
+                onChange={handleFilterChange}
+                label="Cut Type"
+              >
+                <MenuItem value="">All</MenuItem>
+                {cutTypes.map((cut) => (
+                  <MenuItem key={cut} value={cut}>{cut}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <TextField
+              fullWidth
+              name="minOrderSize"
+              label="Min Order Size (kg)"
+              type="number"
+              value={filters.minOrderSize}
+              onChange={handleFilterChange}
+              inputProps={{ step: "0.01" }}
+            />
+
+            <TextField
+              fullWidth
+              name="maxOrderSize"
+              label="Max Order Size (kg)"
+              type="number"
+              value={filters.maxOrderSize}
+              onChange={handleFilterChange}
+              inputProps={{ step: "0.01" }}
+            />
+
+            <TextField
+              fullWidth
+              name="minSpending"
+              label="Min Spending ($)"
+              type="number"
+              value={filters.minSpending}
+              onChange={handleFilterChange}
+              inputProps={{ step: "0.01" }}
+            />
+
+            <TextField
+              fullWidth
+              name="maxSpending"
+              label="Max Spending ($)"
+              type="number"
+              value={filters.maxSpending}
+              onChange={handleFilterChange}
+              inputProps={{ step: "0.01" }}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => {
+            setFilters({
+              meatType: '',
+              cutType: '',
+              minOrderSize: '',
+              maxOrderSize: '',
+              minSpending: '',
+              maxSpending: ''
+            });
+          }}>
+            Clear Filters
+          </Button>
+          <Button onClick={() => setFilterDialogOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>
