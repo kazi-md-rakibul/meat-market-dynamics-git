@@ -122,22 +122,6 @@ CREATE TABLE IF NOT EXISTS Delivery (
     FOREIGN KEY (warehouse_ID) REFERENCES Warehouse(warehouse_ID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- Retailer table
-CREATE TABLE IF NOT EXISTS Retailer (
-    retailer_ID INT AUTO_INCREMENT PRIMARY KEY,
-    salesVolume_perMonth DECIMAL(10,2) NOT NULL,
-    average_Customer_Footfall INT NOT NULL,
-    price_markup DECIMAL(5,2) NOT NULL
-);
-
--- Wholeseller table
-CREATE TABLE IF NOT EXISTS Wholeseller (
-    wholeseller_ID INT AUTO_INCREMENT PRIMARY KEY,
-    purchase_Frequency VARCHAR(50) NOT NULL,
-    average_Order_Value DECIMAL(10,2) NOT NULL,
-    price_markup DECIMAL(5,2) NOT NULL
-);
-
 -- Vendor table
 CREATE TABLE IF NOT EXISTS Vendor (
     vendor_ID INT AUTO_INCREMENT PRIMARY KEY,
